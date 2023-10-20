@@ -11,9 +11,9 @@
    :maxdepth: 2
    :caption: 活動記録:
    
-   record/plan.md
    record/record.md
    record/problem.md
+   record/book.md
 
 .. toctree::
    :maxdepth: 2

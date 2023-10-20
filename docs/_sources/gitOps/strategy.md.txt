@@ -1,1 +1,45 @@
 # ブランチ戦略
+
+代表的なもの
+- git-flow
+- GitHub-flow
+- GitLab-flow
+- gitworkflows
+- trunk
+
+
+## git-flow
+masterとdevelopとreleaseとfeatureが特徴的
+featureで開発したら、developに合流させてから、releaseでリリース作業して、developにマージさせる。
+
+
+## GitHub-flow
+masterとfeatureのみが存在している。
+
+## GitLab-flow
+git-flowとGitHub-flowのミックス
+master(production)とpre-productionとfeatureとdevelopを運用する
+## gitworkflows
+## feature branch workflow
+## trunk-base
+
+
+
+## CICDとブランチ戦略
+### 事実
+各環境に紐づいたブランチが切り分けられている。
+developmentとstatingとmasterのブランチが切られており、それぞれのブランチに修正が入るとdev環境・stg環境・prd環境のPipelineが動作して、スタックの更新を行う。
+
+
+### 課題
+- メンテナンス中でないと更新できない修正
+- devやstgにはリリースしたいけどprdにはマージしたくないもの
+- メンテナンスを待つ必要がない修正で即時にリリースしたい修正
+
+### 対策案
+- メンテナンス向けのリリースブランチを独自に切り出しておく
+- featureブランチを切り出して、直接各develop/staging/mainのブランチにマージする
+    - この手法はFeature branch workflowに似ている
+    - この手法のデメリットはfeatureブランチが増えるとconflictが増えること
+- featureブランチはトランクベースのようにすぐdevelopにマージするようにする
+- release-maintenanceはtruncで開発されているdevをこまめにpullするようにする
