@@ -26,6 +26,7 @@
    :caption: gitOps:
 
    gitOps/basic.md
+   gitOps/gitlab.md
    gitOps/strategy.md
 
 
