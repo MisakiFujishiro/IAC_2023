@@ -41,12 +41,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="plan.html">実施計画</a></li>
 <li class="toctree-l1"><a class="reference internal" href="record.html">活動記録</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problem.html">相談事項</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">情報収集</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#devops">DevOps導入指南</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">システム運用アンチパターン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#devops">DevOps導入指南</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">DevOpsとは</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">組織への導入方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">システム運用アンチパターン</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#infrastructure-as-code">Infrastructure as Code</a></li>
 </ul>
 </li>
@@ -58,6 +61,7 @@
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/basic.html">gitの基本</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html"></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
 </ul>
 
@@ -89,6 +93,83 @@
 <h1>情報収集<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
 <section id="devops">
 <h2>DevOps導入指南<a class="headerlink" href="#devops" title="Permalink to this heading">¶</a></h2>
+<section id="id2">
+<h3>DevOpsとは<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Dev(開発)とOps(運用)が連携してビジネス価値を高めようとする働き方や文化</p>
+<ul>
+<li><p>オーバーヘッドを解消して省力化することで速度と柔軟性を与える</p></li>
+<li><p>開発フローやチームビルディング、文化まで含める</p></li>
+</ul>
+</li>
+<li><p>どうしてDevOpsが生まれたか</p>
+<ul>
+<li><p>Agile開発による継続的な開発への変化</p></li>
+<li><p>継続的な開発により見えた運用の課題</p></li>
+</ul>
+</li>
+<li><p>Agileによる継続的な開発</p>
+<ul>
+<li><p>継続的なインテグレーションツールなどが導入</p></li>
+<li><p>運用面での課題が残る</p></li>
+</ul>
+</li>
+<li><p>継続的な開発により見えた運用の課題</p>
+<ul>
+<li><p>インフラチームがアプリを意識していない</p></li>
+<li><p>開発者側は非機能要件（モニタリング・冗長化・バックアップ）について蔑ろにする</p></li>
+<li><p>伝統的に開発と運用は対立構造になりやすい</p>
+<ul>
+<li><p>開発はビジネスのためにサービスに変化をもたらす</p></li>
+<li><p>運用は安定稼働のために変化を嫌う</p></li>
+<li><p>しかし、運用であっても目的は安定稼働ではなく、ビジネスの向上である</p></li>
+<li><p>求められる姿は、変化によるリスクをツールと文化によって低減することである</p></li>
+</ul>
+</li>
+<li><p>ツール</p>
+<ul>
+<li><p>インフラ自動化</p></li>
+<li><p>バージョン管理</p></li>
+<li><p>ビルドとデプロイの自動化</p></li>
+<li><p>設定ファイルによる機能の有効化無効化管理</p></li>
+</ul>
+</li>
+<li><p>文化</p>
+<ul>
+<li><p>尊重</p></li>
+<li><p>信頼</p></li>
+<li><p>失敗に対する前向きな姿勢</p></li>
+<li><p>非難しないこと</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>対策</p>
+<ul>
+<li><p>スクラムチームにインフラも入る機能横断型チームになる</p></li>
+<li><p>混乱の壁（運用と開発の壁）を乗り越えて、お互いの領域に入って開発することが重要</p></li>
+<li><p>そのためにアジャイルインフラを実現する方法として Infrastructure is code</p>
+<ul>
+<li><p>開発と運用は同じ場所で同じものを見ることが重要で、Iacを利用する</p></li>
+<li><p>リポジトリの利用やブランチ運用が重要</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>IaCとは</p>
+<ul>
+<li><p>ツールによって定義ファイル通りに設定を行う</p></li>
+<li><p>継続的な開発によって見えてきた運用課題の解決手法の軸</p></li>
+<li><p>定義ファイルにより、インフラの構成と設定を宣言しているため、アプリエンジニアでもインフラ構築が可能になる</p></li>
+<li><p>インフラの構成や設定をソフトウェアの領域に転換してソフトウェアの手法を適用できるようになる</p></li>
+<li><p>バージョン管理やテストを適用できる</p></li>
+<li><p>学習コストは通常のプログラミングと比較して簡単</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id3">
+<h3>組織への導入方法<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>DevOpsは開発や運用を効率化しプロダクトの価値を高める大きなチャンス</p></li>
 <li><p>新しい組織やプロジェクト開始時はDevOpsを導入するチャンス。既存のルールがないことや決まった習慣がないのは重要</p>
@@ -122,8 +203,9 @@
 <li><p>成果も併せてメンバーにDevOpsの価値を啓蒙し、ボトムアップを進めていく</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>システム運用アンチパターン<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="id4">
+<h2>システム運用アンチパターン<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="infrastructure-as-code">
 <h2>Infrastructure as Code<a class="headerlink" href="#infrastructure-as-code" title="Permalink to this heading">¶</a></h2>

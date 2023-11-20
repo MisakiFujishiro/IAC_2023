@@ -1,6 +1,56 @@
-# 
+# gitによるタスク管理
+[タスク管理の体系化](https://scrapbox.io/sta-taskmanagement/GitLab_Issues)
 
 
-## Setting
-gitlabのアカウント作成からsshキーを利用したgitcloneまで
+## 設定
+### gitの設定
+gitlabのアカウント作成からsshキーを利用したgitcloneまでは
 [【git】SSH認証キーをGitLabに登録してclone](https://qiita.com/kazumakishimoto/items/1f0cf4207dad2801887a)
+を参考にして設定すると良い。githubとgitlabをどちらも利用できるようになる。
+
+## 基本設定
+### 特定ブランチへのPushやマージの制御
+CICDなどを利用していると、masterなどの特定ブランチへのPushやMergeは制御する必要がある。
+[GitLabでmasterへのPushを防ぐ](https://qiita.com/kr_ss/items/810895688d508f699ae9)
+を参考にすることで、マージやPushのメンバーを制御することができる。
+
+### テンプレート作成
+#### Issueのテンプレートの作成方法
+[Issue Templateを作る](https://qiita.com/e99h2121/items/2690103fce58cdbdc714)
+Issue作成時に、テンプレートを利用できるようになる。
+
+![](../img/gitlab_issue_template.png)
+
+#### MRのテンプレート作成方法
+[気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った](https://qiita.com/yasu99/items/87924164b5d538979a2b)
+
+
+### Labelの利用
+管理>ラベルから、新しいラベルの作成を選択して作成する
+![](../img/gitlab_label_make.png)
+
+タスクの着手状況を管理するためにタスク状況管理ラベルを作成する
+![](../img/gitlab_labels.png)
+
+各Issueにラベルを付与することができるようになる。
+
+## タスク管理
+### issueからブランチを作成
+[GitLab(またはGitHub) Issueを用いた開発手順](https://qiita.com/e99h2121/items/00c2c9619feccdff81d3)
+1. PJのナビゲーションペインからIssuesを選択
+2. Newissueを作成
+    - Titleは英語でキャメルにするのがおすすめ。
+    - 後で作成するBranchNameが一致する
+    - 担当者・締切・マイルストーン・ラベルが設定可能。どのように利用するかは調査
+![](../img/gitlab_issue_make.png)
+3. ブランチ作成  
+    - 作成したIssueからCreateBranchでブランチが作成できる
+![](../img/gitlab_issue_branch.png)
+4. コミットでissueとの紐付け
+    - #{ISSUE_NUM}と指定するとgitlabのGUIでは参照される
+5. マージリクエスト
+    - 自動でClose#{USSUE_NUM}を指定してくれる
+![](../img/gitlab_issue_mr.png)
+6. マージすると自動で、Closeされる。
+
+
