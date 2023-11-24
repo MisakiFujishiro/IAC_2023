@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ブランチ戦略" href="strategy.html" />
-    <link rel="prev" title="gitの基本" href="basic.html" /> 
+    <link rel="prev" title="情報収集" href="../record/book.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,33 +42,41 @@
               <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../record/record.html">活動記録</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../record/problem.html">相談事項</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../record/book.html">情報収集</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">アウトライン:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../outline/topics.html">課題一覧</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="basic.html">gitの基本</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">gitによるタスク管理</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">設定</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">gitの設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">各種用語</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#issue">Issue</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#epic">Epic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#milestone">MileStone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">ロードマップ</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">基本設定</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id3">設定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">gitの設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">基本設定</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#push">特定ブランチへのPushやマージの制御</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">テンプレート作成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#issue">Issueのテンプレートの作成方法</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#mr">MRのテンプレート作成方法</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Issueの使い方</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#label">Labelの利用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">issueからブランチを作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#draft">Draftを利用したマージリクエスト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kanban">kanbanの利用</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">タスク管理</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id6">issueからブランチを作成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Milestoneの使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">テンプレート作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Issueのテンプレートの作成方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mr">MRのテンプレート作成方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">クイックアクション</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -102,37 +110,83 @@
              
   <section id="git">
 <h1>gitによるタスク管理<a class="headerlink" href="#git" title="Permalink to this heading">¶</a></h1>
-<p><a class="reference external" href="https://scrapbox.io/sta-taskmanagement/GitLab_Issues">タスク管理の体系化</a></p>
 <section id="id1">
-<h2>設定<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<h2>各種用語<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>Issue/Epic/Milestone/Roadmapについては<a class="reference external" href="https://blogs.networld.co.jp/entry/2023/04/20/090000">20分で理解する！GitLabのイシュー、エピック、マイルストーン、ロードマップ概要</a>がわかりやすい。</p>
+<section id="issue">
+<h3>Issue<a class="headerlink" href="#issue" title="Permalink to this heading">¶</a></h3>
+<p>やることリストで、階層構造にすることはできない。<br />
+細かいタスクレベルの粒度でIssueは切って良いと思う。次に説明するEpicでIssueをまとめて粒度を設定できるので</p>
+</section>
+<section id="epic">
+<h3>Epic<a class="headerlink" href="#epic" title="Permalink to this heading">¶</a></h3>
+<p>複数のIssueを意味のある単位で階層構造で理解するための機能。<br />
+ポイントとして、この後説明するマイルストーンが時系列ベースでタスクを管理する機能なので、意味のある単位で整理するためにEpicは利用される。
+Epicは階層構造を構成することが可能なため、以下のような構造にできる</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">親エピック</span>
+    <span class="o">-</span> <span class="n">子エピック1</span>
+        <span class="o">-</span> <span class="n">Issue1</span>
+        <span class="o">-</span> <span class="n">Issue2</span>
+        <span class="o">-</span> <span class="n">Issue3</span>
+        <span class="o">-</span> <span class="n">Issue4</span>
+        <span class="o">-</span> <span class="n">Issue5</span>
+    <span class="o">-</span> <span class="n">子エピック2</span>
+        <span class="o">-</span> <span class="n">Issue6</span>
+        <span class="o">-</span> <span class="n">Issue7</span>
+        <span class="o">-</span> <span class="n">Issue8</span>
+        <span class="o">-</span> <span class="n">Issue9</span>
+</pre></div>
+</div>
+</section>
+<section id="milestone">
+<h3>MileStone<a class="headerlink" href="#milestone" title="Permalink to this heading">¶</a></h3>
+<p>リリースなどのスケジュールに基づいてIssueを管理するための機能がマイルストーン。<br />
+Issueや関連するMargeRequestベースで進捗を管理することができる。</p>
+<p>リリースの予定をマイルストーンとして作成して、そのマイルストーンに関連するIssueを紐づけることで、完了しているIssue、OpenのIssue、MRの数などを可視化することができる。具体的にはIssueを対象としたバーンダウンチャートのようなものを書いてくれる。</p>
+<p>EpicとMileStoneの違いは以下のイメージ</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">親エピック</span>
+    <span class="o">-</span> <span class="n">子エピック1</span>
+        <span class="o">-</span> <span class="n">Issue1</span><span class="p">(</span><span class="n">マイルストーンα</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue2</span><span class="p">(</span><span class="n">マイルストーンα</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue3</span><span class="p">(</span><span class="n">マイルストーンα</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue4</span><span class="p">(</span><span class="n">マイルストーンβ</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue5</span><span class="p">(</span><span class="n">マイルストーンβ</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">子エピック2</span>
+        <span class="o">-</span> <span class="n">Issue6</span><span class="p">(</span><span class="n">マイルストーンα</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue7</span><span class="p">(</span><span class="n">マイルストーンα</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue8</span><span class="p">(</span><span class="n">マイルストーンβ</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">Issue9</span><span class="p">(</span><span class="n">マイルストーンβ</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="id2">
-<h3>gitの設定<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3>ロードマップ<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>エピックとマイルストーンをガントチャート形式で視覚化するための機能。
+以下の例のようにマイルストーンを確認しつつ、各Epicごとの進捗率を確認することができる。</p>
+<p><img alt="" src="../_images/gitlab_roadmap.png" />
+<a class="reference external" href="https://blogs.networld.co.jp/entry/2023/04/20/090000">引用サイト</a></p>
+</section>
+</section>
+<section id="id3">
+<h2>設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<section id="id4">
+<h3>gitの設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
 <p>gitlabのアカウント作成からsshキーを利用したgitcloneまでは
 <a class="reference external" href="https://qiita.com/kazumakishimoto/items/1f0cf4207dad2801887a">【git】SSH認証キーをGitLabに登録してclone</a>
 を参考にして設定すると良い。githubとgitlabをどちらも利用できるようになる。</p>
 </section>
 </section>
-<section id="id3">
-<h2>基本設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<section id="id5">
+<h2>基本設定<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
 <section id="push">
 <h3>特定ブランチへのPushやマージの制御<a class="headerlink" href="#push" title="Permalink to this heading">¶</a></h3>
 <p>CICDなどを利用していると、masterなどの特定ブランチへのPushやMergeは制御する必要がある。
 <a class="reference external" href="https://qiita.com/kr_ss/items/810895688d508f699ae9">GitLabでmasterへのPushを防ぐ</a>
 を参考にすることで、マージやPushのメンバーを制御することができる。</p>
 </section>
-<section id="id4">
-<h3>テンプレート作成<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
-<section id="issue">
-<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#issue" title="Permalink to this heading">¶</a></h4>
-<p><a class="reference external" href="https://qiita.com/e99h2121/items/2690103fce58cdbdc714">Issue Templateを作る</a>
-Issue作成時に、テンプレートを利用できるようになる。</p>
-<p><img alt="" src="../_images/gitlab_issue_template.png" /></p>
 </section>
-<section id="mr">
-<h4>MRのテンプレート作成方法<a class="headerlink" href="#mr" title="Permalink to this heading">¶</a></h4>
-<p><a class="reference external" href="https://qiita.com/yasu99/items/87924164b5d538979a2b">気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った</a></p>
-</section>
-</section>
+<section id="id6">
+<h2>Issueの使い方<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
 <section id="label">
 <h3>Labelの利用<a class="headerlink" href="#label" title="Permalink to this heading">¶</a></h3>
 <p>管理&gt;ラベルから、新しいラベルの作成を選択して作成する
@@ -140,12 +194,17 @@ Issue作成時に、テンプレートを利用できるようになる。</p>
 <p>タスクの着手状況を管理するためにタスク状況管理ラベルを作成する
 <img alt="" src="../_images/gitlab_labels.png" /></p>
 <p>各Issueにラベルを付与することができるようになる。</p>
+<p>以下のようなラベルがおすすめ</p>
+<ul class="simple">
+<li><p>Open（作成）：Issueがオープンされた状態で、思いついたことを書いておく</p></li>
+<li><p>TODO（作成）：近々着手の必要があり、議題に挙げていく必要があること</p></li>
+<li><p>Ready（作成）：着手するための情報が全て出揃い、着手可能なステータス</p></li>
+<li><p>Doing（作成）：現在着手中</p></li>
+<li><p>Close(デフォルト)：Issueが完了した場合</p></li>
+</ul>
 </section>
-</section>
-<section id="id5">
-<h2>タスク管理<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
-<section id="id6">
-<h3>issueからブランチを作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<section id="id7">
+<h3>issueからブランチを作成<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 <p><a class="reference external" href="https://qiita.com/e99h2121/items/00c2c9619feccdff81d3">GitLab(またはGitHub) Issueを用いた開発手順</a></p>
 <ol class="arabic simple">
 <li><p>PJのナビゲーションペインからIssuesを選択</p></li>
@@ -177,6 +236,64 @@ Issue作成時に、テンプレートを利用できるようになる。</p>
 <li><p>マージすると自動で、Closeされる。</p></li>
 </ol>
 </section>
+<section id="draft">
+<h3>Draftを利用したマージリクエスト<a class="headerlink" href="#draft" title="Permalink to this heading">¶</a></h3>
+<p>issueからブランチを作成する際に、マージリクエストを作成という機能もある。<br />
+<img alt="" src="../_images/gitlab_issue_mr_make.png" /></p>
+<p>まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
+<img alt="" src="../_images/gitlab_mr_draft.png" /></p>
+<p>下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
+マージはまだしたくないが、RVを欲しい時などに利用される。
+<img alt="" src="../_images/gitlab_draft_block.png" /></p>
+</section>
+<section id="kanban">
+<h3>kanbanの利用<a class="headerlink" href="#kanban" title="Permalink to this heading">¶</a></h3>
+<p>Issueの管理にIssue Boardを利用するとGUIでkanbanでタスク管理をすることができる。<br />
+kanbanで利用したいタグは事前にIssueのLabelとして定義しておく。</p>
+<p>デフォルトでkanbanにはIssueのOpenとCloseが設定されている。これは、ボードの編集からオフにすることができる。
+<img alt="" src="../_images/gitlab_kanban_setup.png" /></p>
+<p>リストを作成から、事前に作成したLabelをkanbanのセクションにすることができる
+<img alt="" src="../_images/gitlab_kanban.png" /></p>
+</section>
+</section>
+<section id="id8">
+<h2>Milestoneの使い方<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<p>Milestoneを作成する。
+<img alt="" src="../_images/gitlab_milestone_make.png" /></p>
+<p>Issue側で、マイルストーンを紐づけることができるので、作成してMilestoneに紐づける。
+紐付ける事でIssueがMileStone上で管理され、Issueの進捗率やIssueで登録した見積もりと経過時間を統合して確認することができる。</p>
+<p><img alt="" src="../_images/gitlab_milestone.png" /></p>
+</section>
+<section id="tips">
+<h2>Tips<a class="headerlink" href="#tips" title="Permalink to this heading">¶</a></h2>
+<section id="id9">
+<h3>テンプレート作成<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<section id="id10">
+<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h4>
+<p><a class="reference external" href="https://qiita.com/e99h2121/items/2690103fce58cdbdc714">Issue Templateを作る</a>
+Issue作成時に、テンプレートを利用できるようになる。
+<img alt="" src="../_images/gitlab_issue_template.png" /></p>
+</section>
+<section id="mr">
+<h4>MRのテンプレート作成方法<a class="headerlink" href="#mr" title="Permalink to this heading">¶</a></h4>
+<p>MargeRequestもテンプレートを作成することができる。
+<a class="reference external" href="https://qiita.com/yasu99/items/87924164b5d538979a2b">気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った</a></p>
+</section>
+<section id="id11">
+<h4>クイックアクション<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h4>
+<p>Issueのコメント欄に所定の形式でコマンドを記述すると、各種設定値を設定することができる。この機能をクイックアクションと呼ぶ。</p>
+<ul class="simple">
+<li><p>/assign &#64;&lt;アサインしたいユーザー名&gt;：タスクにメンバーをアサイン</p></li>
+<li><p>/estimate &lt;1d 1h 1m &gt;：見積り時間を設定する</p></li>
+<li><p>/spend &lt;+1d&gt;：実施時間を追加、削減</p></li>
+<li><p>/tableflip：(╯°□°)╯︵ ┻━┻ちゃぶ台返しできる</p></li>
+</ul>
+<p><img alt="" src="../_images/gitlab_quick_action.png" /></p>
+<p>クイックアクションを利用すると、簡単な稼働管理をすることもできる。
+<img alt="" src="../_images/gitlab_estimate_spend.png" /></p>
+<p>テンプレートとクイックアクションを組み合わせることで、ラベルの付与から、アサインなど初期でgitlabで設定したい内容までテンプレート化することができる。</p>
+</section>
+</section>
 </section>
 </section>
 
@@ -184,7 +301,7 @@ Issue作成時に、テンプレートを利用できるようになる。</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="basic.html" class="btn btn-neutral float-left" title="gitの基本" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../record/book.html" class="btn btn-neutral float-left" title="情報収集" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="strategy.html" class="btn btn-neutral float-right" title="ブランチ戦略" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

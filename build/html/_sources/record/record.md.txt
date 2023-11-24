@@ -16,33 +16,18 @@ IaCの導入・運用に関する課題と対策を
 ![](../img/outline_best_pattern.png)
 
 
-### 読書内容
-詳細は[別ページ](https://misakifujishiro.github.io/IAC_2023/record/book.html)に整理中
-#### DevOps導入指南
-組織への導入方法が記載されていて参考になる
-- 新しい組織はトップダウン
-- 既存組織はボトムアップ
-    - 価値を出して啓蒙する
-
-#### システム運用アンチパターン
-#### Infrastructure as Code
-
-
-### JIRAの環境構築
-[JIRA](https://iac-fujishiroms.atlassian.net/jira/software/projects/KAN/boards/1)のアカウント取得
-
-### ブランチ戦略について勉強
-[gitのブランチ戦略の別ページ](https://misakifujishiro.github.io/IAC_2023/gitOps/strategy.html)
-
-
 
 ## 11月
-あげたアンチパターンに対する対策を調査・深掘りしていく
+- あげたアンチパターンに対する対策を調査・深掘りしていく
+- DevOpsの価値の理解を深めていく
+[DevOps導入指南](https://misakifujishiro.github.io/IAC_2023/record/book.html)に整理中
+- gitlabとjiraの利用方法整理して開発の基本フローを整理していく
+
 
 
 ## 12月
-どうやって、アンチパターンに対する対策をチームに反映させるかを検討
-
+- gitlabとjiraの整理を踏まえて、開発フローの定石を整理する
+- 開発フローの定石を整理を踏まえて、IaCの運用ルールを整理していく
 
 ## 1月
 実際に環境構築してみて連携とかも考える

@@ -1,5 +1,60 @@
 # gitによるタスク管理
-[タスク管理の体系化](https://scrapbox.io/sta-taskmanagement/GitLab_Issues)
+## 各種用語
+Issue/Epic/Milestone/Roadmapについては[20分で理解する！GitLabのイシュー、エピック、マイルストーン、ロードマップ概要](https://blogs.networld.co.jp/entry/2023/04/20/090000)がわかりやすい。
+### Issue
+やることリストで、階層構造にすることはできない。  
+細かいタスクレベルの粒度でIssueは切って良いと思う。次に説明するEpicでIssueをまとめて粒度を設定できるので
+
+### Epic
+複数のIssueを意味のある単位で階層構造で理解するための機能。  
+ポイントとして、この後説明するマイルストーンが時系列ベースでタスクを管理する機能なので、意味のある単位で整理するためにEpicは利用される。
+Epicは階層構造を構成することが可能なため、以下のような構造にできる
+```
+- 親エピック
+    - 子エピック1
+        - Issue1
+        - Issue2
+        - Issue3
+        - Issue4
+        - Issue5
+    - 子エピック2
+        - Issue6
+        - Issue7
+        - Issue8
+        - Issue9
+```
+
+### MileStone
+リリースなどのスケジュールに基づいてIssueを管理するための機能がマイルストーン。  
+Issueや関連するMargeRequestベースで進捗を管理することができる。
+
+リリースの予定をマイルストーンとして作成して、そのマイルストーンに関連するIssueを紐づけることで、完了しているIssue、OpenのIssue、MRの数などを可視化することができる。具体的にはIssueを対象としたバーンダウンチャートのようなものを書いてくれる。
+
+EpicとMileStoneの違いは以下のイメージ
+```
+- 親エピック
+    - 子エピック1
+        - Issue1(マイルストーンα)
+        - Issue2(マイルストーンα)
+        - Issue3(マイルストーンα)
+        - Issue4(マイルストーンβ)
+        - Issue5(マイルストーンβ)
+    - 子エピック2
+        - Issue6(マイルストーンα)
+        - Issue7(マイルストーンα)
+        - Issue8(マイルストーンβ)
+        - Issue9(マイルストーンβ)
+```
+### ロードマップ
+エピックとマイルストーンをガントチャート形式で視覚化するための機能。
+以下の例のようにマイルストーンを確認しつつ、各Epicごとの進捗率を確認することができる。
+
+![](../img/gitlab_roadmap.png)
+[引用サイト](https://blogs.networld.co.jp/entry/2023/04/20/090000)
+
+
+
+
 
 
 ## 設定
@@ -14,17 +69,8 @@ CICDなどを利用していると、masterなどの特定ブランチへのPush
 [GitLabでmasterへのPushを防ぐ](https://qiita.com/kr_ss/items/810895688d508f699ae9)
 を参考にすることで、マージやPushのメンバーを制御することができる。
 
-### テンプレート作成
-#### Issueのテンプレートの作成方法
-[Issue Templateを作る](https://qiita.com/e99h2121/items/2690103fce58cdbdc714)
-Issue作成時に、テンプレートを利用できるようになる。
 
-![](../img/gitlab_issue_template.png)
-
-#### MRのテンプレート作成方法
-[気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った](https://qiita.com/yasu99/items/87924164b5d538979a2b)
-
-
+## Issueの使い方
 ### Labelの利用
 管理>ラベルから、新しいラベルの作成を選択して作成する
 ![](../img/gitlab_label_make.png)
@@ -34,7 +80,14 @@ Issue作成時に、テンプレートを利用できるようになる。
 
 各Issueにラベルを付与することができるようになる。
 
-## タスク管理
+以下のようなラベルがおすすめ
+- Open（作成）：Issueがオープンされた状態で、思いついたことを書いておく
+- TODO（作成）：近々着手の必要があり、議題に挙げていく必要があること
+- Ready（作成）：着手するための情報が全て出揃い、着手可能なステータス
+- Doing（作成）：現在着手中
+- Close(デフォルト)：Issueが完了した場合
+
+
 ### issueからブランチを作成
 [GitLab(またはGitHub) Issueを用いた開発手順](https://qiita.com/e99h2121/items/00c2c9619feccdff81d3)
 1. PJのナビゲーションペインからIssuesを選択
@@ -53,4 +106,63 @@ Issue作成時に、テンプレートを利用できるようになる。
 ![](../img/gitlab_issue_mr.png)
 6. マージすると自動で、Closeされる。
 
+### Draftを利用したマージリクエスト
+issueからブランチを作成する際に、マージリクエストを作成という機能もある。  
+![](../img/gitlab_issue_mr_make.png)
+
+まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
+![](../img/gitlab_mr_draft.png)
+
+
+下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
+マージはまだしたくないが、RVを欲しい時などに利用される。
+![](../img/gitlab_draft_block.png)
+
+### kanbanの利用
+Issueの管理にIssue Boardを利用するとGUIでkanbanでタスク管理をすることができる。  
+kanbanで利用したいタグは事前にIssueのLabelとして定義しておく。
+
+デフォルトでkanbanにはIssueのOpenとCloseが設定されている。これは、ボードの編集からオフにすることができる。
+![](../img/gitlab_kanban_setup.png)
+
+リストを作成から、事前に作成したLabelをkanbanのセクションにすることができる
+![](../img/gitlab_kanban.png)
+
+
+## Milestoneの使い方
+Milestoneを作成する。
+![](../img/gitlab_milestone_make.png)
+
+Issue側で、マイルストーンを紐づけることができるので、作成してMilestoneに紐づける。
+紐付ける事でIssueがMileStone上で管理され、Issueの進捗率やIssueで登録した見積もりと経過時間を統合して確認することができる。
+
+![](../img/gitlab_milestone.png)
+
+
+## Tips
+### テンプレート作成
+#### Issueのテンプレートの作成方法
+[Issue Templateを作る](https://qiita.com/e99h2121/items/2690103fce58cdbdc714)
+Issue作成時に、テンプレートを利用できるようになる。
+![](../img/gitlab_issue_template.png)
+
+
+#### MRのテンプレート作成方法
+MargeRequestもテンプレートを作成することができる。
+[気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った](https://qiita.com/yasu99/items/87924164b5d538979a2b)
+
+
+#### クイックアクション
+Issueのコメント欄に所定の形式でコマンドを記述すると、各種設定値を設定することができる。この機能をクイックアクションと呼ぶ。
+- /assign @<アサインしたいユーザー名>：タスクにメンバーをアサイン
+- /estimate <1d 1h 1m >：見積り時間を設定する
+- /spend <+1d>：実施時間を追加、削減
+- /tableflip：(╯°□°)╯︵ ┻━┻ちゃぶ台返しできる
+
+![](../img/gitlab_quick_action.png)
+
+クイックアクションを利用すると、簡単な稼働管理をすることもできる。
+![](../img/gitlab_estimate_spend.png)
+
+テンプレートとクイックアクションを組み合わせることで、ラベルの付与から、アサインなど初期でgitlabで設定したい内容までテンプレート化することができる。
 

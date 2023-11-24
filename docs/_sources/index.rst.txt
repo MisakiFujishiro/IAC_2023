@@ -12,20 +12,12 @@
    :caption: 活動記録:
    
    record/record.md
-   record/problem.md
    record/book.md
-
-.. toctree::
-   :maxdepth: 2
-   :caption: アウトライン:
-   
-   outline/topics.md
 
 .. toctree::
    :maxdepth: 2
    :caption: gitOps:
 
-   gitOps/basic.md
    gitOps/gitlab.md
    gitOps/strategy.md
 
