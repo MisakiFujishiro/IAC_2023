@@ -65,16 +65,26 @@
 <li class="toctree-l2"><a class="reference internal" href="#id6">Issueの使い方</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#label">Labelの利用</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id7">issueからブランチを作成</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#draft">Draftを利用したマージリクエスト</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#kanban">kanbanの利用</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id8">Milestoneの使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wiki">Wikiの追加いかた</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#home">Homeの設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">配下のページ設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Wikiの履歴による管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#margerequest">MargeRequest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#draft">Draftを利用したマージリクエスト</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#squashandmerge">SquashAndMerge</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">テンプレート作成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id10">Issueのテンプレートの作成方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">テンプレート作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Issueのテンプレートの作成方法</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mr">MRのテンプレート作成方法</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">クイックアクション</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">クイックアクション</a></li>
 </ul>
 </li>
 </ul>
@@ -236,16 +246,6 @@ Issueや関連するMargeRequestベースで進捗を管理することができ
 <li><p>マージすると自動で、Closeされる。</p></li>
 </ol>
 </section>
-<section id="draft">
-<h3>Draftを利用したマージリクエスト<a class="headerlink" href="#draft" title="Permalink to this heading">¶</a></h3>
-<p>issueからブランチを作成する際に、マージリクエストを作成という機能もある。<br />
-<img alt="" src="../_images/gitlab_issue_mr_make.png" /></p>
-<p>まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
-<img alt="" src="../_images/gitlab_mr_draft.png" /></p>
-<p>下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
-マージはまだしたくないが、RVを欲しい時などに利用される。
-<img alt="" src="../_images/gitlab_draft_block.png" /></p>
-</section>
 <section id="kanban">
 <h3>kanbanの利用<a class="headerlink" href="#kanban" title="Permalink to this heading">¶</a></h3>
 <p>Issueの管理にIssue Boardを利用するとGUIでkanbanでタスク管理をすることができる。<br />
@@ -264,12 +264,62 @@ kanbanで利用したいタグは事前にIssueのLabelとして定義してお�
 紐付ける事でIssueがMileStone上で管理され、Issueの進捗率やIssueで登録した見積もりと経過時間を統合して確認することができる。</p>
 <p><img alt="" src="../_images/gitlab_milestone.png" /></p>
 </section>
+<section id="wiki">
+<h2>Wikiの追加いかた<a class="headerlink" href="#wiki" title="Permalink to this heading">¶</a></h2>
+<section id="home">
+<h3>Homeの設定<a class="headerlink" href="#home" title="Permalink to this heading">¶</a></h3>
+<p>gitlabのwikiから「最初のページを設定」を押下して作成する。<br />
+<img alt="" src="../_images/gitlab_wiki_home_make.png" /></p>
+<p>Wikiアクセス時の最初の画面になる。
+<img alt="" src="../_images/gitlab_wiki_home.png" /></p>
+<p>Homeから、新規で作成したページなどに参照を貼りたい場合は<code class="docutils literal notranslate"><span class="pre">[[Path/To/Page]]</span></code>のように記述する。
+<img alt="" src="../_images/gitlab_wiki_ref.png" /></p>
+</section>
+<section id="id9">
+<h3>配下のページ設定<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<p>新しいページを作成というボタンから、ページを作成することができる。<br />
+作成時に、階層構造を設定することで作成されるページを階層構造にすることができる。<br />
+<img alt="" src="../_images/gitlab_wiki_newpage_make.png" /></p>
+<p>先頭に<code class="docutils literal notranslate"><span class="pre">[[_TOC_]]</span></code>を追加することで目次を自動生成してくれる。
+<img alt="" src="../_images/gitlab_wiki_newpage.png" /></p>
+</section>
+<section id="id10">
+<h3>Wikiの履歴による管理<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<p>Wikiに変更を加えた場合、ページの履歴に変更内容を残すことができるので、Wiki管理が楽になる。
+<img alt="" src="../_images/gitlab_wiki_rireki.png" /></p>
+</section>
+</section>
+<section id="margerequest">
+<h2>MargeRequest<a class="headerlink" href="#margerequest" title="Permalink to this heading">¶</a></h2>
+<section id="draft">
+<h3>Draftを利用したマージリクエスト<a class="headerlink" href="#draft" title="Permalink to this heading">¶</a></h3>
+<p>issueからブランチを作成する際に、マージリクエストを作成という機能もある。<br />
+<img alt="" src="../_images/gitlab_issue_mr_make.png" /></p>
+<p>まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
+<img alt="" src="../_images/gitlab_mr_draft.png" /></p>
+<p>下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
+マージはまだしたくないが、RVを欲しい時などに利用される。
+<img alt="" src="../_images/gitlab_draft_block.png" /></p>
+</section>
+<section id="squashandmerge">
+<h3>SquashAndMerge<a class="headerlink" href="#squashandmerge" title="Permalink to this heading">¶</a></h3>
+<p>複数のCommitについて、マージする際に1つのコミットにまとめることができる機能。
+例えば、RVで修正が入った場合や作業単位でコミットを細かくしていた場合、マージする際にはコミットをまとめたい場合がある。</p>
+<p>クライアント側でPushする際にRebaseを利用してCommitをまとめることができるが、Squashはマージをする際に複数のコミットをマージする機能</p>
+<p>例えば、すでに２つのコミットをしているブランチでPushした場合のグラフは以下。
+<img alt="" src="../_images/gitlab_squash_1.png" /></p>
+<p>Mergeの際にSquashにチェックを入れてマージする。
+<img alt="" src="../_images/gitlab_squash_2.png" /></p>
+<p>以下のように２つあったコミットが1つにまとまっている。元々のブランチを残しておくと、そちらは2つのコミットが残った状態になっている。
+<img alt="" src="../_images/gitlab_squash_3.png" /></p>
+</section>
+</section>
 <section id="tips">
 <h2>Tips<a class="headerlink" href="#tips" title="Permalink to this heading">¶</a></h2>
-<section id="id9">
-<h3>テンプレート作成<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
-<section id="id10">
-<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h4>
+<section id="id11">
+<h3>テンプレート作成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<section id="id12">
+<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h4>
 <p><a class="reference external" href="https://qiita.com/e99h2121/items/2690103fce58cdbdc714">Issue Templateを作る</a>
 Issue作成時に、テンプレートを利用できるようになる。
 <img alt="" src="../_images/gitlab_issue_template.png" /></p>
@@ -279,8 +329,8 @@ Issue作成時に、テンプレートを利用できるようになる。
 <p>MargeRequestもテンプレートを作成することができる。
 <a class="reference external" href="https://qiita.com/yasu99/items/87924164b5d538979a2b">気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った</a></p>
 </section>
-<section id="id11">
-<h4>クイックアクション<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h4>
+<section id="id13">
+<h4>クイックアクション<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h4>
 <p>Issueのコメント欄に所定の形式でコマンドを記述すると、各種設定値を設定することができる。この機能をクイックアクションと呼ぶ。</p>
 <ul class="simple">
 <li><p>/assign &#64;&lt;アサインしたいユーザー名&gt;：タスクにメンバーをアサイン</p></li>

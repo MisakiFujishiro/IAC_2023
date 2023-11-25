@@ -106,18 +106,6 @@ CICDなどを利用していると、masterなどの特定ブランチへのPush
 ![](../img/gitlab_issue_mr.png)
 6. マージすると自動で、Closeされる。
 
-### Draftを利用したマージリクエスト
-issueからブランチを作成する際に、マージリクエストを作成という機能もある。  
-![](../img/gitlab_issue_mr_make.png)
-
-まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
-![](../img/gitlab_mr_draft.png)
-
-
-下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
-マージはまだしたくないが、RVを欲しい時などに利用される。
-![](../img/gitlab_draft_block.png)
-
 ### kanbanの利用
 Issueの管理にIssue Boardを利用するとGUIでkanbanでタスク管理をすることができる。  
 kanbanで利用したいタグは事前にIssueのLabelとして定義しておく。
@@ -137,6 +125,64 @@ Issue側で、マイルストーンを紐づけることができるので、作
 紐付ける事でIssueがMileStone上で管理され、Issueの進捗率やIssueで登録した見積もりと経過時間を統合して確認することができる。
 
 ![](../img/gitlab_milestone.png)
+
+
+## Wikiの追加いかた
+### Homeの設定
+gitlabのwikiから「最初のページを設定」を押下して作成する。   
+![](../img/gitlab_wiki_home_make.png)
+
+Wikiアクセス時の最初の画面になる。
+![](../img/gitlab_wiki_home.png)
+
+Homeから、新規で作成したページなどに参照を貼りたい場合は`[[Path/To/Page]]`のように記述する。
+![](../img/gitlab_wiki_ref.png)
+
+### 配下のページ設定
+新しいページを作成というボタンから、ページを作成することができる。  
+作成時に、階層構造を設定することで作成されるページを階層構造にすることができる。  
+![](../img/gitlab_wiki_newpage_make.png)
+
+先頭に`[[_TOC_]]`を追加することで目次を自動生成してくれる。
+![](../img/gitlab_wiki_newpage.png)
+
+
+
+### Wikiの履歴による管理
+Wikiに変更を加えた場合、ページの履歴に変更内容を残すことができるので、Wiki管理が楽になる。
+![](../img/gitlab_wiki_rireki.png)
+
+
+
+
+## MargeRequest
+### Draftを利用したマージリクエスト
+issueからブランチを作成する際に、マージリクエストを作成という機能もある。  
+![](../img/gitlab_issue_mr_make.png)
+
+まだ、編集をしていないのにマージリクエストとは？と思ったが、どうやらDraftでのMRを作成してくれるらしい。
+![](../img/gitlab_mr_draft.png)
+
+
+下書きのMRと呼ばれ、DraftでのMRとは、Draftを解除してから出ないとマージすることができない状態になる。
+マージはまだしたくないが、RVを欲しい時などに利用される。
+![](../img/gitlab_draft_block.png)
+
+### SquashAndMerge
+複数のCommitについて、マージする際に1つのコミットにまとめることができる機能。
+例えば、RVで修正が入った場合や作業単位でコミットを細かくしていた場合、マージする際にはコミットをまとめたい場合がある。
+
+クライアント側でPushする際にRebaseを利用してCommitをまとめることができるが、Squashはマージをする際に複数のコミットをマージする機能
+
+例えば、すでに２つのコミットをしているブランチでPushした場合のグラフは以下。
+![](../img/gitlab_squash_1.png)
+
+Mergeの際にSquashにチェックを入れてマージする。
+![](../img/gitlab_squash_2.png)
+
+以下のように２つあったコミットが1つにまとまっている。元々のブランチを残しておくと、そちらは2つのコミットが残った状態になっている。
+![](../img/gitlab_squash_3.png)
+
 
 
 ## Tips

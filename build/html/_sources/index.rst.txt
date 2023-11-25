@@ -20,5 +20,6 @@
 
    gitOps/gitlab.md
    gitOps/strategy.md
+   gitOps/dev_flow.md
 
 
