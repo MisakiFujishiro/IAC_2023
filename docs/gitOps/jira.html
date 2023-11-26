@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jiraによるタスク管理 &mdash; iac_2023 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ブランチ戦略" href="strategy.html" />
+    <link rel="prev" title="gitによるタスク管理" href="gitlab.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> iac_2023
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../record/record.html">活動記録</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/book.html">情報収集</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gitlab.html">gitによるタスク管理</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">jiraによるタスク管理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">JIRAについて</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">各種用語</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">基本設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">課題管理方法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kanban">kanbanの作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">ステータスの追加</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">課題の作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">課題の項目の追加</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">レポート</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">メモ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_flow.html">gitlabとJIRAの比較</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_flow.html#id5">開発フロー案</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">iac_2023</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">jiraによるタスク管理</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/gitOps/jira.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jira">
+<h1>jiraによるタスク管理<a class="headerlink" href="#jira" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>JIRAについて<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>JIRAはatlassian社が提供しているチケット管理ツールであり、特にアジャイルのためのプロジェクト管理ツール。
+<a class="reference external" href="https://qiita.com/ikedahideya/items/b21c535a7db0aa03395c">Jiraの活用事例　～課題管理編～</a>で語られているが、色々利用方法があり、自分達にフィットした利用方法を見つけるのが難しいと思う。</p>
+<blockquote>
+<div><p>Jiraは高機能でやろうと思えば様々なことが実現できる反面、自由度が高く、効果的な使い方に行きつくには時間をかけて試行錯誤をする必要があるように思えます。インターネットで活用事例を探そうにも、なかなか自分にフィットする使い方が見つからないのではないでしょうか。</p>
+</div></blockquote>
+</section>
+<section id="id2">
+<h2>各種用語<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="id3">
+<h2>基本設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<p>jiraの無償版の申し込みをする。jiraのサイトから簡単に無償版の申請ができる。</p>
+</section>
+<section id="id4">
+<h2>課題管理方法<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<section id="kanban">
+<h3>kanbanの作成<a class="headerlink" href="#kanban" title="Permalink to this heading">¶</a></h3>
+<p>kanbanを利用して、課題管理をしてみよう。<a class="reference external" href="https://qiita.com/ikedahideya/items/b21c535a7db0aa03395c">Jiraの活用事例　～課題管理編～</a>を踏襲する形でkanbanを作成する。</p>
+<p>最初から、ステータスが「作業前、進行中、完了」と作成されており、レーンに分かれている。
+<img alt="" src="../_images/jira_kanban.png" /></p>
+<section id="id5">
+<h4>ステータスの追加<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h4>
+<p>レーンを事前に設定されたものだけでなく追加したい場合は、右側の「+」から追加でき、自動的にステータスにも追加される。
+今回はReadyを追加。
+<img alt="" src="../_images/jira_kanban_status.png" /></p>
+</section>
+</section>
+<section id="id6">
+<h3>課題の作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<p>kanbanから課題を追加することができる。
+追加した課題からは以下ができるようだ</p>
+<ul class="simple">
+<li><p>エピックの追加</p></li>
+<li><p>子課題の追加</p></li>
+<li><p>課題のリンク</p></li>
+<li><p>説明の追加</p></li>
+<li><p>コメント</p></li>
+<li><p>担当者割り当ての追加
+<img alt="" src="../_images/jira_kadai_make.png" /></p></li>
+</ul>
+<section id="id7">
+<h4>課題の項目の追加<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">設定&gt;プロジェクト設定&gt;課題タイプ</span></code>から、課題タイプごとのテンプレートとして項目自体を追加することができる。
+<img alt="" src="../_images/jira_kadai_levelup.png" /></p>
+<p>今回はpriorityを追加することで、課題を作成するとpriorityが追加されている
+<img alt="" src="../_images/jira_kadai_levelup_priority.png" /></p>
+</section>
+</section>
+<section id="id8">
+<h3>レポート<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<p>レポート機能を利用すると、タスクの累積フロー図などをみることができる</p>
+<p><img alt="" src="../_images/jira_kadai_flow.png" /></p>
+</section>
+</section>
+<section id="id9">
+<h2>メモ<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/572321b4c7d07e5d59c5">Jiraの活用事例　～スケジュール管理編～</a></p></li>
+<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/60b247a031684d29786a">Jiraの活用事例　～スクラム初心者編～</a></p></li>
+<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/fe93f4d14cce95d0bfa6">Jiraの活用事例　～チケットの時間管理編～</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gitlab.html" class="btn btn-neutral float-left" title="gitによるタスク管理" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="strategy.html" class="btn btn-neutral float-right" title="ブランチ戦略" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, misaki.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

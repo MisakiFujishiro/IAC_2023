@@ -47,23 +47,38 @@
 <li class="toctree-l3"><a class="reference internal" href="#id3">IaC導入・運用に向けた対策洗い出し</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">11月</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">12月</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">1月</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">2月</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">3月</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">11月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#devops">DevOpsの価値の理解を深めていく</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gitlabjira">gitlabとjiraの利用方法をつかながら整理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">改めてストーリーを考える</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">12月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">gitlabとjiraの利用方法をつかながら整理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">IaCと課題管理の統合</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">1月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">開発フロー確定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">デモ作成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">2月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">運用しやすい IaCとは？</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">3月</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="book.html">情報収集</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">アウトライン:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../outline/topics.html">課題一覧</a></li>
-</ul>
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
 </ul>
 
         </div>
@@ -95,9 +110,8 @@
 <section id="id2">
 <h2>10月<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <p>IaCの導入・運用に関する課題と対策を
-<a class="reference external" href="https://miro.com/app/board/uXjVPgP397c=/?share_link_id=233118975605">MIRO</a>に整理。</p>
-<p>書籍を読みながら、肉付け実施中。一度塾の中でも議論したいと思っている。</p>
-<p>並行して、JIRAやGitについて環境作りながらどんなことができるのかを整理中。</p>
+<a class="reference external" href="https://miro.com/app/board/uXjVPgP397c=/?share_link_id=233118975605">MIRO</a>に整理。
+塾生メンバーとも課題感を議論し、それも踏まえて課題を整理しきる。</p>
 <section id="iac">
 <h3>IaCの導入・運用に向けた課題の洗い出し<a class="headerlink" href="#iac" title="Permalink to this heading">¶</a></h3>
 <p><img alt="" src="../_images/outline_anti_pattern.png" /></p>
@@ -109,29 +123,105 @@
 </section>
 <section id="id4">
 <h2>11月<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<section id="devops">
+<h3>DevOpsの価値の理解を深めていく<a class="headerlink" href="#devops" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>あげたアンチパターンに対する対策を調査・深掘りしていく</p></li>
-<li><p>DevOpsの価値の理解を深めていく
-<a class="reference external" href="https://misakifujishiro.github.io/IAC_2023/record/book.html">DevOps導入指南</a>に整理中</p></li>
-<li><p>gitlabとjiraの利用方法整理して開発の基本フローを整理していく</p></li>
+<li><p><a class="reference external" href="https://misakifujishiro.github.io/IAC_2023/record/book.html">DevOps導入指南</a>を読みながら価値を整理</p></li>
+<li><p>DevOpsの価値とDevOpsを根付かせるためにはIaCや課題管理ツールの利用が重要である</p></li>
+<li><p>テーマや流れについて整理</p></li>
+</ul>
+</section>
+<section id="gitlabjira">
+<h3>gitlabとjiraの利用方法をつかながら整理<a class="headerlink" href="#gitlabjira" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>gitlabでできること</p></li>
+<li><p>gitlab利用した開発の基本フローを整理</p></li>
 </ul>
 </section>
 <section id="id5">
-<h2>12月<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
+<h3>改めてストーリーを考える<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>gitlabとjiraの整理を踏まえて、開発フローの定石を整理する</p></li>
-<li><p>開発フローの定石を整理を踏まえて、IaCの運用ルールを整理していく</p></li>
+<li><p>課題管理からソースコードの編集までの流れは整理できそうな雰囲気が出てきた。</p></li>
+<li><p>改めて全体のストーリーをどうするのか</p>
+<ul>
+<li><p>DevOpsには価値がある</p></li>
+<li><p>DevOpsの文化醸成のためには IaCが重要</p></li>
+<li><p>IaCの課題リストアップ</p></li>
+<li><p>重点ピックアップ課題</p>
+<ul>
+<li><p>業務課題とIacのソースコード修正の紐付け</p></li>
+<li><p>Devチームが運用していくためにどのような準備をすればよいか</p></li>
+</ul>
+</li>
+<li><p>業務課題とIacのソースコード修正の紐付け</p>
+<ul>
+<li><p>gitlabやjiraとの連携</p></li>
+<li><p>運用フローの整理</p></li>
+</ul>
+</li>
+<li><p>Devチームが運用していくためにどのような準備をすればよいか</p>
+<ul>
+<li><p>宣言的であるメリット</p></li>
+<li><p>Ifによる分岐はなるべく利用しない（ロジックは除く）</p></li>
+<li><p>CICDのPipelineは必須で準備</p></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </section>
-<section id="id6">
-<h2>1月<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
-<p>実際に環境構築してみて連携とかも考える</p>
 </section>
+<section id="id6">
+<h2>12月<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
 <section id="id7">
-<h2>2月<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
+<h3>gitlabとjiraの利用方法をつかながら整理<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>jiraでできること</p></li>
+<li><p>jira利用した開発の基本フローを整理</p></li>
+<li><p>gitlabとjiraの組み合わせでできること</p></li>
+<li><p>gitlabとjiraの組み合わせで開発の基本フローを整理</p></li>
+</ul>
 </section>
 <section id="id8">
-<h2>3月<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<h3>IaCと課題管理の統合<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>プロジェクト管理という目線でいうと、JIRAとgitlabのPJを連携するのが好ましいのでは？</p></li>
+</ul>
+</section>
+</section>
+<section id="id9">
+<h2>1月<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h2>
+<section id="id10">
+<h3>開発フロー確定<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>本格的にJIRAとgitlabのPJを連携してみる</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>デモ作成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>実際にJRIAの課題から IaCの変更までのデモを作成</p></li>
+</ul>
+</section>
+</section>
+<section id="id12">
+<h2>2月<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h2>
+<section id="id13">
+<h3>運用しやすい IaCとは？<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>上記までで、業務側の課題管理との連携およびIaCを運用するための流れを整理。</p></li>
+<li><p>実際に運用しやすい IaCとはどのようなものになるのかを一気通貫で整理していく</p>
+<ul>
+<li><p>IaCとCICDはセットにする</p></li>
+<li><p>なるべくConditionは利用しない</p></li>
+<li></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id14">
+<h2>3月<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>開発フロー案 &mdash; iac_2023 1.0.0 documentation</title>
+  <title>gitlabとJIRAの比較 &mdash; iac_2023 1.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -46,14 +46,29 @@
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gitlab.html">gitによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jira.html">jiraによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">開発フロー案</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#gitlab">gitlabを利用した開発フロー</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">事前準備</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">タスク管理</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">開発</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">gitlabとJIRAの比較</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gitlab">gitlabでしかできないこと</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">要確認</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">確定</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#jira">JIRAでしかできないこと</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">要確認</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">確定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id5">開発フロー案</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id6">gitlabを利用した開発フロー</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">事前準備</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">タスク管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">開発</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">JIRAを利用した開発フロー</a></li>
 </ul>
 </li>
 </ul>
@@ -72,7 +87,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">開発フロー案</li>
+      <li class="breadcrumb-item active">gitlabとJIRAの比較</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/gitOps/dev_flow.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -82,12 +97,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>開発フロー案<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+  <section id="gitlabjira">
+<h1>gitlabとJIRAの比較<a class="headerlink" href="#gitlabjira" title="Permalink to this heading">¶</a></h1>
 <section id="gitlab">
-<h2>gitlabを利用した開発フロー<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h2>
+<h2>gitlabでしかできないこと<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h2>
+<section id="id1">
+<h3>要確認<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>課題とブランチやソースを紐づける</p>
+<ul>
+<li><p>Issueからブランチ作る</p></li>
+</ul>
+</li>
+<li><p>IssueやMRのテンプレート作成</p></li>
+</ul>
+</section>
 <section id="id2">
-<h3>事前準備<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3>確定<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+<section id="jira">
+<h2>JIRAでしかできないこと<a class="headerlink" href="#jira" title="Permalink to this heading">¶</a></h2>
+<section id="id3">
+<h3>要確認<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>課題のリンク</p></li>
+<li><p>課題のメンテナンス（必要項目の作成）</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>確定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+</section>
+<section id="id5">
+<h1>開発フロー案<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h1>
+<section id="id6">
+<h2>gitlabを利用した開発フロー<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
+<section id="id7">
+<h3>事前準備<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Wikiを利用</p>
 <ul>
@@ -113,8 +161,8 @@
 </li>
 </ul>
 </section>
-<section id="id3">
-<h3>タスク管理<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<section id="id8">
+<h3>タスク管理<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Issueを作成する</p>
 <ul>
@@ -137,8 +185,8 @@
 </li>
 </ul>
 </section>
-<section id="id4">
-<h3>開発<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<section id="id9">
+<h3>開発<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Issueからブランチを作成する</p></li>
 <li><p>RVが必要な場合はDraftでMRを出しておく</p>
@@ -155,6 +203,9 @@
 </li>
 </ul>
 </section>
+</section>
+<section id="id10">
+<h2>JIRAを利用した開発フロー<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
