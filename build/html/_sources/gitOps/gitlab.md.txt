@@ -57,17 +57,12 @@ EpicとMileStoneの違いは以下のイメージ
 
 
 
-## 設定
+## 基本設定
 ### gitの設定
 gitlabのアカウント作成からsshキーを利用したgitcloneまでは
 [【git】SSH認証キーをGitLabに登録してclone](https://qiita.com/kazumakishimoto/items/1f0cf4207dad2801887a)
 を参考にして設定すると良い。githubとgitlabをどちらも利用できるようになる。
 
-## 基本設定
-### 特定ブランチへのPushやマージの制御
-CICDなどを利用していると、masterなどの特定ブランチへのPushやMergeは制御する必要がある。
-[GitLabでmasterへのPushを防ぐ](https://qiita.com/kr_ss/items/810895688d508f699ae9)
-を参考にすることで、マージやPushのメンバーを制御することができる。
 
 
 ## Issueの使い方
@@ -127,7 +122,7 @@ Issue側で、マイルストーンを紐づけることができるので、作
 ![](../img/gitlab_milestone.png)
 
 
-## Wikiの追加いかた
+## Wikiの使い方
 ### Homeの設定
 gitlabのwikiから「最初のページを設定」を押下して作成する。   
 ![](../img/gitlab_wiki_home_make.png)
@@ -184,6 +179,41 @@ Mergeの際にSquashにチェックを入れてマージする。
 ![](../img/gitlab_squash_3.png)
 
 
+## ブランチの管理
+masterなどの特定ブランチへのPushやMergeは制御する必要がある。
+[GitLabでmasterへのPushを防ぐ](https://qiita.com/kr_ss/items/810895688d508f699ae9)
+を参考にすることで、マージやPushのメンバーを制御することができる。
+
+
+### 事前準備
+- gitlabの新規アカウント作成
+- 新規アカウントをDevメンバーとしてPJに招待
+
+### Pushの禁止
+テスト用のProtectedというブランチを作成しておく、`設定＞リポジトリ＞Protected Branch`から、ProtectedBranchを設定する。
+![](../img/gitlab_protected_setting.png)
+
+Dev Userから、Fileをアップロードしてみる。
+![](../img/gitlab_protected_upload.png)
+
+そうすると、MergeRequestが自動で作成される。
+![](../img/gitlab_protected_MR.png)
+
+グラフを見てみても、Protected BranchへUploadしたはずが、自動で新しいブランチが切られてMRが作成されている。
+![](../img/gitlab_protected_graph.png)
+
+マージの許可もMaintainerに絞っているので、DevメンバーではMergeできないが、MaintainerではMergeできる。
+![](../img/gitlab_protected_MR_Auth.png)
+
+
+今回はGUIから実施したが、CLIから実施すると`You don't have Permission`となって、失敗するらしく、MRも自動で作成されない。
+
+### MergeRequestの承認
+Ultimateの機能であるが、特定のブランチに対して、DeveloperのPushやマージを禁止することができる。
+[【Github】勝手にマージされないようにブランチを保護した](https://zakkuri.life/github-protect-branch/#google_vignette)を参考にすることでMergeRequestの際にさらに詳細なルール設定を行うことができる。
+
+![](../img/gitlab_MR_Auth.png)
+[GitとCI/CDに関する知識ゼロのSEが、GitLabでマージリクエストの承認ルール機能をちょっとだけ試す (2023/07/05 更新)](https://blogs.networld.co.jp/entry/2022/06/08/091207)
 
 ## Tips
 ### テンプレート作成

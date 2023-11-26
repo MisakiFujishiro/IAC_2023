@@ -54,25 +54,21 @@
 <li class="toctree-l3"><a class="reference internal" href="#id2">ロードマップ</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">設定</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id3">基本設定</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id4">gitの設定</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">基本設定</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#push">特定ブランチへのPushやマージの制御</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">Issueの使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Issueの使い方</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#label">Labelの利用</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">issueからブランチを作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">issueからブランチを作成</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#kanban">kanbanの利用</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">Milestoneの使い方</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wiki">Wikiの追加いかた</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Milestoneの使い方</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wiki">Wikiの使い方</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#home">Homeの設定</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">配下のページ設定</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Wikiの履歴による管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">配下のページ設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Wikiの履歴による管理</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#margerequest">MargeRequest</a><ul>
@@ -80,11 +76,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#squashandmerge">SquashAndMerge</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">ブランチの管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">事前準備</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#push">Pushの禁止</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mergerequest">MergeRequestの承認</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id11">テンプレート作成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id12">Issueのテンプレートの作成方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">テンプレート作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Issueのテンプレートの作成方法</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mr">MRのテンプレート作成方法</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id13">クイックアクション</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">クイックアクション</a></li>
 </ul>
 </li>
 </ul>
@@ -92,6 +94,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_flow.html">開発フロー案</a></li>
 </ul>
 
         </div>
@@ -178,7 +181,7 @@ Issueや関連するMargeRequestベースで進捗を管理することができ
 </section>
 </section>
 <section id="id3">
-<h2>設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<h2>基本設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
 <section id="id4">
 <h3>gitの設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
 <p>gitlabのアカウント作成からsshキーを利用したgitcloneまでは
@@ -187,16 +190,7 @@ Issueや関連するMargeRequestベースで進捗を管理することができ
 </section>
 </section>
 <section id="id5">
-<h2>基本設定<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
-<section id="push">
-<h3>特定ブランチへのPushやマージの制御<a class="headerlink" href="#push" title="Permalink to this heading">¶</a></h3>
-<p>CICDなどを利用していると、masterなどの特定ブランチへのPushやMergeは制御する必要がある。
-<a class="reference external" href="https://qiita.com/kr_ss/items/810895688d508f699ae9">GitLabでmasterへのPushを防ぐ</a>
-を参考にすることで、マージやPushのメンバーを制御することができる。</p>
-</section>
-</section>
-<section id="id6">
-<h2>Issueの使い方<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
+<h2>Issueの使い方<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
 <section id="label">
 <h3>Labelの利用<a class="headerlink" href="#label" title="Permalink to this heading">¶</a></h3>
 <p>管理&gt;ラベルから、新しいラベルの作成を選択して作成する
@@ -213,8 +207,8 @@ Issueや関連するMargeRequestベースで進捗を管理することができ
 <li><p>Close(デフォルト)：Issueが完了した場合</p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>issueからブランチを作成<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<section id="id6">
+<h3>issueからブランチを作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
 <p><a class="reference external" href="https://qiita.com/e99h2121/items/00c2c9619feccdff81d3">GitLab(またはGitHub) Issueを用いた開発手順</a></p>
 <ol class="arabic simple">
 <li><p>PJのナビゲーションペインからIssuesを選択</p></li>
@@ -256,8 +250,8 @@ kanbanで利用したいタグは事前にIssueのLabelとして定義してお�
 <img alt="" src="../_images/gitlab_kanban.png" /></p>
 </section>
 </section>
-<section id="id8">
-<h2>Milestoneの使い方<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<section id="id7">
+<h2>Milestoneの使い方<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
 <p>Milestoneを作成する。
 <img alt="" src="../_images/gitlab_milestone_make.png" /></p>
 <p>Issue側で、マイルストーンを紐づけることができるので、作成してMilestoneに紐づける。
@@ -265,7 +259,7 @@ kanbanで利用したいタグは事前にIssueのLabelとして定義してお�
 <p><img alt="" src="../_images/gitlab_milestone.png" /></p>
 </section>
 <section id="wiki">
-<h2>Wikiの追加いかた<a class="headerlink" href="#wiki" title="Permalink to this heading">¶</a></h2>
+<h2>Wikiの使い方<a class="headerlink" href="#wiki" title="Permalink to this heading">¶</a></h2>
 <section id="home">
 <h3>Homeの設定<a class="headerlink" href="#home" title="Permalink to this heading">¶</a></h3>
 <p>gitlabのwikiから「最初のページを設定」を押下して作成する。<br />
@@ -275,16 +269,16 @@ kanbanで利用したいタグは事前にIssueのLabelとして定義してお�
 <p>Homeから、新規で作成したページなどに参照を貼りたい場合は<code class="docutils literal notranslate"><span class="pre">[[Path/To/Page]]</span></code>のように記述する。
 <img alt="" src="../_images/gitlab_wiki_ref.png" /></p>
 </section>
-<section id="id9">
-<h3>配下のページ設定<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<section id="id8">
+<h3>配下のページ設定<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <p>新しいページを作成というボタンから、ページを作成することができる。<br />
 作成時に、階層構造を設定することで作成されるページを階層構造にすることができる。<br />
 <img alt="" src="../_images/gitlab_wiki_newpage_make.png" /></p>
 <p>先頭に<code class="docutils literal notranslate"><span class="pre">[[_TOC_]]</span></code>を追加することで目次を自動生成してくれる。
 <img alt="" src="../_images/gitlab_wiki_newpage.png" /></p>
 </section>
-<section id="id10">
-<h3>Wikiの履歴による管理<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<section id="id9">
+<h3>Wikiの履歴による管理<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 <p>Wikiに変更を加えた場合、ページの履歴に変更内容を残すことができるので、Wiki管理が楽になる。
 <img alt="" src="../_images/gitlab_wiki_rireki.png" /></p>
 </section>
@@ -314,12 +308,46 @@ kanbanで利用したいタグは事前にIssueのLabelとして定義してお�
 <img alt="" src="../_images/gitlab_squash_3.png" /></p>
 </section>
 </section>
+<section id="id10">
+<h2>ブランチの管理<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
+<p>masterなどの特定ブランチへのPushやMergeは制御する必要がある。
+<a class="reference external" href="https://qiita.com/kr_ss/items/810895688d508f699ae9">GitLabでmasterへのPushを防ぐ</a>
+を参考にすることで、マージやPushのメンバーを制御することができる。</p>
+<section id="id11">
+<h3>事前準備<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>gitlabの新規アカウント作成</p></li>
+<li><p>新規アカウントをDevメンバーとしてPJに招待</p></li>
+</ul>
+</section>
+<section id="push">
+<h3>Pushの禁止<a class="headerlink" href="#push" title="Permalink to this heading">¶</a></h3>
+<p>テスト用のProtectedというブランチを作成しておく、<code class="docutils literal notranslate"><span class="pre">設定＞リポジトリ＞Protected</span> <span class="pre">Branch</span></code>から、ProtectedBranchを設定する。
+<img alt="" src="../_images/gitlab_protected_setting.png" /></p>
+<p>Dev Userから、Fileをアップロードしてみる。
+<img alt="" src="../_images/gitlab_protected_upload.png" /></p>
+<p>そうすると、MergeRequestが自動で作成される。
+<img alt="" src="../_images/gitlab_protected_MR.png" /></p>
+<p>グラフを見てみても、Protected BranchへUploadしたはずが、自動で新しいブランチが切られてMRが作成されている。
+<img alt="" src="../_images/gitlab_protected_graph.png" /></p>
+<p>マージの許可もMaintainerに絞っているので、DevメンバーではMergeできないが、MaintainerではMergeできる。
+<img alt="" src="../_images/gitlab_protected_MR_Auth.png" /></p>
+<p>今回はGUIから実施したが、CLIから実施すると<code class="docutils literal notranslate"><span class="pre">You</span> <span class="pre">don't</span> <span class="pre">have</span> <span class="pre">Permission</span></code>となって、失敗するらしく、MRも自動で作成されない。</p>
+</section>
+<section id="mergerequest">
+<h3>MergeRequestの承認<a class="headerlink" href="#mergerequest" title="Permalink to this heading">¶</a></h3>
+<p>Ultimateの機能であるが、特定のブランチに対して、DeveloperのPushやマージを禁止することができる。
+<a class="reference external" href="https://zakkuri.life/github-protect-branch/#google_vignette">【Github】勝手にマージされないようにブランチを保護した</a>を参考にすることでMergeRequestの際にさらに詳細なルール設定を行うことができる。</p>
+<p><img alt="" src="../_images/gitlab_MR_Auth.png" />
+<a class="reference external" href="https://blogs.networld.co.jp/entry/2022/06/08/091207">GitとCI/CDに関する知識ゼロのSEが、GitLabでマージリクエストの承認ルール機能をちょっとだけ試す (2023/07/05 更新)</a></p>
+</section>
+</section>
 <section id="tips">
 <h2>Tips<a class="headerlink" href="#tips" title="Permalink to this heading">¶</a></h2>
-<section id="id11">
-<h3>テンプレート作成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
 <section id="id12">
-<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h4>
+<h3>テンプレート作成<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h3>
+<section id="id13">
+<h4>Issueのテンプレートの作成方法<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h4>
 <p><a class="reference external" href="https://qiita.com/e99h2121/items/2690103fce58cdbdc714">Issue Templateを作る</a>
 Issue作成時に、テンプレートを利用できるようになる。
 <img alt="" src="../_images/gitlab_issue_template.png" /></p>
@@ -329,8 +357,8 @@ Issue作成時に、テンプレートを利用できるようになる。
 <p>MargeRequestもテンプレートを作成することができる。
 <a class="reference external" href="https://qiita.com/yasu99/items/87924164b5d538979a2b">気軽に追加できて5W1Hで書けるGitHub/GitLabのIssue/プルリクテンプレートを作った</a></p>
 </section>
-<section id="id13">
-<h4>クイックアクション<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h4>
+<section id="id14">
+<h4>クイックアクション<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h4>
 <p>Issueのコメント欄に所定の形式でコマンドを記述すると、各種設定値を設定することができる。この機能をクイックアクションと呼ぶ。</p>
 <ul class="simple">
 <li><p>/assign &#64;&lt;アサインしたいユーザー名&gt;：タスクにメンバーをアサイン</p></li>
