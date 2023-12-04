@@ -49,21 +49,49 @@
 <li class="toctree-l1"><a class="reference internal" href="gitlab.html">gitによるタスク管理</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">jiraによるタスク管理</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">JIRAについて</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">各種用語</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">基本設定</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">課題管理方法</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#kanban">kanbanの作成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id5">ステータスの追加</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">基本設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kanban">課題管理(kanban)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">kanbanの作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">ステータスの追加</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">課題の作成</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id7">課題の項目の追加</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">課題の作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">課題の項目の追加</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">レポート</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">レポート</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">メモ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">スケジュール管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#epic-issue">タイムライン-Epic-Issueの管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">サブタスクの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">【参考】スクラム編</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">スクラムの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">スクラムの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">バックログ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">ストーリーポイント</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">スプリントの開始</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id16">タイムライン</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">kanban</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">レポート</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">【参考】チケットの時間管理編</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id20">事前準備</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">時間での見積もり</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id22">サブタスクの時間見積もり</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">時間の記録</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id24">見積もり時間内の場合</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
@@ -106,28 +134,27 @@
 </div></blockquote>
 </section>
 <section id="id2">
-<h2>各種用語<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
-</section>
-<section id="id3">
-<h2>基本設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<h2>基本設定<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <p>jiraの無償版の申し込みをする。jiraのサイトから簡単に無償版の申請ができる。</p>
+<p>各PJを作成する時の<code class="docutils literal notranslate"><span class="pre">キー</span></code>は、タスクやエピック全ての接頭辞になり、目にする機会が多いので適切なものを選択する。
+おすすめはPJ名の省略文字など。</p>
 </section>
-<section id="id4">
-<h2>課題管理方法<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
 <section id="kanban">
-<h3>kanbanの作成<a class="headerlink" href="#kanban" title="Permalink to this heading">¶</a></h3>
+<h2>課題管理(kanban)<a class="headerlink" href="#kanban" title="Permalink to this heading">¶</a></h2>
+<section id="id3">
+<h3>kanbanの作成<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
 <p>kanbanを利用して、課題管理をしてみよう。<a class="reference external" href="https://qiita.com/ikedahideya/items/b21c535a7db0aa03395c">Jiraの活用事例　～課題管理編～</a>を踏襲する形でkanbanを作成する。</p>
 <p>最初から、ステータスが「作業前、進行中、完了」と作成されており、レーンに分かれている。
 <img alt="" src="../_images/jira_kanban.png" /></p>
-<section id="id5">
-<h4>ステータスの追加<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h4>
+<section id="id4">
+<h4>ステータスの追加<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h4>
 <p>レーンを事前に設定されたものだけでなく追加したい場合は、右側の「+」から追加でき、自動的にステータスにも追加される。
 今回はReadyを追加。
 <img alt="" src="../_images/jira_kanban_status.png" /></p>
 </section>
 </section>
-<section id="id6">
-<h3>課題の作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<section id="id5">
+<h3>課題の作成<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
 <p>kanbanから課題を追加することができる。
 追加した課題からは以下ができるようだ</p>
 <ul class="simple">
@@ -139,27 +166,148 @@
 <li><p>担当者割り当ての追加
 <img alt="" src="../_images/jira_kadai_make.png" /></p></li>
 </ul>
-<section id="id7">
-<h4>課題の項目の追加<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h4>
+<section id="id6">
+<h4>課題の項目の追加<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">設定&gt;プロジェクト設定&gt;課題タイプ</span></code>から、課題タイプごとのテンプレートとして項目自体を追加することができる。
 <img alt="" src="../_images/jira_kadai_levelup.png" /></p>
 <p>今回はpriorityを追加することで、課題を作成するとpriorityが追加されている
 <img alt="" src="../_images/jira_kadai_levelup_priority.png" /></p>
 </section>
 </section>
-<section id="id8">
-<h3>レポート<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<section id="id7">
+<h3>レポート<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 <p>レポート機能を利用すると、タスクの累積フロー図などをみることができる</p>
 <p><img alt="" src="../_images/jira_kadai_flow.png" /></p>
 </section>
 </section>
+<section id="id8">
+<h2>スケジュール管理<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<p>前提としてJIRAはAgile開発などに利用されることを想定している管理のため、日にち単位での作業進捗を管理するようなスケジュール管理には向かない。</p>
+<p>これはそもそもAgile開発の思想としては、以下の原則を重視しているためである。</p>
+<ol class="arabic simple">
+<li><p>提供価値の重視<br />
+スケジュールを守ることよりも、提供価値を大きくすることを重視している。<br />
+スケジュールが重要ではないということではないが、価値のために変化を受け入れるため、細かなスケジュール管理を劣後している。</p></li>
+<li><p>短期間での反復<br />
+細かいスプリントレベルでの開発サイクルを回すため、細かいタスクはスプリントの中で管理を行い、
+全体方針としては、生み出される成果物(Epicレベル)を管理する仕組みになっている。</p></li>
+<li><p>チームの自律性<br />
+Agileではチームの自立性を高めることが重要視されており、過度な管理をすることは推奨されていない。</p></li>
+</ol>
+<p>上記を踏まえ、成果物を生み出すということを重視したAgile開発の、スケジュールを管理をJIRAを利用して行う。
+<a class="reference external" href="https://qiita.com/ikedahideya/items/572321b4c7d07e5d59c5">Jiraの活用事例　～スケジュール管理編～</a>を参考に設定していく。</p>
+<section id="epic-issue">
+<h3>タイムライン-Epic-Issueの管理<a class="headerlink" href="#epic-issue" title="Permalink to this heading">¶</a></h3>
+<p>タイムラインから、Epicを追加することができる。Epicは複数の課題をまとめた、ワンセットのタスクや機能単位を指す。
+エピックごとに開始と終了を設定することができる。
+また、Epicごとに色を設定することができ、Epicが参照されるときは常にその色が設定される。
+<img alt="" src="../_images/jira_timeline.png" /></p>
+<p>Epicから、課題を追加することができ、kanban側にIssumeも自動で追加される。
+<img alt="" src="../_images/jira_epic.png" /></p>
+<p>既に作成したIssueをEpicに追加する場合は、Issueの画面からEpicを追加する。
+<img alt="" src="../_images/jira_issue_add_epic.png" /></p>
+<p>Epic配下にあるIssueが完了すると、Epic全体として、Issueがどのくらい完了しているかを把握することができる。
+<img alt="" src="../_images/jira_kanryou_epic.png" /></p>
+</section>
 <section id="id9">
-<h2>メモ<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h2>
+<h3>サブタスクの管理<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<p>各Issueの画面からサブタスクを切り分けることができる。各タスクから子課題の設定を行う。
+<img alt="" src="../_images/jira_subtask.png" /></p>
+<p>サブタスクはタイムラインからは確認することができないが、kanbanの画面を切り替えることでサブタスクの進捗を確認することができる。</p>
+<p><img alt="" src="../_images/jira_subtask_kanban.png" /></p>
+</section>
+</section>
+<section id="id10">
+<h2>【参考】スクラム編<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
+<section id="id11">
+<h3>スクラムの作成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<p><a class="reference external" href="https://qiita.com/ikedahideya/items/60b247a031684d29786a">Jiraの活用事例　～スクラム初心者編～</a>を参考にスクラムのPJを作成していく</p>
+</section>
+<section id="id12">
+<h3>スクラムの作成<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h3>
+<p>スクラムを選択して、PJを作成する。</p>
+</section>
+<section id="id13">
+<h3>バックログ<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<p>バックログとして、以下の３つの課題を管理することができる</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/572321b4c7d07e5d59c5">Jiraの活用事例　～スケジュール管理編～</a></p></li>
-<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/60b247a031684d29786a">Jiraの活用事例　～スクラム初心者編～</a></p></li>
-<li><p><a class="reference external" href="https://qiita.com/ikedahideya/items/fe93f4d14cce95d0bfa6">Jiraの活用事例　～チケットの時間管理編～</a></p></li>
+<li><p>ストーリ：ユーザーに新しい価値を提供する機能単位</p></li>
+<li><p>タスク：ユーザーには価値を提供しないものの、放置するとベロシティを下げるもの</p></li>
+<li><p>バグ：リリース後に発覚したバグ</p></li>
 </ul>
+<p>基本的には、ストーリーの開発を進め、バグは優先度に応じて対応、ベロシティの低下が課題になっているときにタスクを見直すようにする。
+ストーリー・タスク・バグ全てエピック配下として管理することが可能
+<img alt="" src="../_images/jira_backlog.png" /></p>
+</section>
+<section id="id14">
+<h3>ストーリーポイント<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<p>各課題（ストーリ・タスク・バグ・サブタスク）に対して、ストーリーポイントの見積りを行い、記録する。</p>
+<p><img alt="" src="../_images/jira_story_poing.png" /></p>
+<p>注意点として、サブタスクのストーリーポイントを見積もったとしても、親タスクのストーリーポイントは合算地にならず改めて親タスクにポイントを設定する必要がある。
+<img alt="" src="../_images/jira_story_poing_subtask.png" /></p>
+</section>
+<section id="id15">
+<h3>スプリントの開始<a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h3>
+<p>バックログから、スプリントに課題を追加していき、ストーリーポイントの合算値がベロシティと同程度になったら、スプリントを開始する。
+<img alt="" src="../_images/jira_sprint_start.png" /></p>
+<section id="id16">
+<h4>タイムライン<a class="headerlink" href="#id16" title="Permalink to this heading">¶</a></h4>
+<p>スプリントを開始すると、自動でタイムラインにスプリントの情報をマッピングしてくれる。
+エピックと課題、Sprintの関係を自動で可視化してくれるので便利。
+<img alt="" src="../_images/jira_sprint_timeline.png" /></p>
+</section>
+<section id="id17">
+<h4>kanban<a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h4>
+<p>スプリントの場合、kanbanも全タスクが対象ではなく、スプリントで対象となっている課題たちのみが対象となる。<br />
+利用方法としては、タスク管理でもスプリントでも同じで、課題単位やサブタスク単位でkanbanを利用できる。
+<img alt="" src="../_images/jira_sprint_kanban.png" /></p>
+</section>
+<section id="id18">
+<h4>レポート<a class="headerlink" href="#id18" title="Permalink to this heading">¶</a></h4>
+<p>バーンダウンチャートを利用して、ストーリーポイントの進捗状況や完了済みや未完了の課題を一覧かすることができ、レトロスペクティブの時に便利。
+<img alt="" src="../_images/jira_spring_chart.png" /></p>
+</section>
+</section>
+</section>
+<section id="id19">
+<h2>【参考】チケットの時間管理編<a class="headerlink" href="#id19" title="Permalink to this heading">¶</a></h2>
+<p>スプリントを開始する際には、時間単位での見積もりを行うことが多いと思うが、その時間を管理する方法を紹介する。</p>
+<p><a class="reference external" href="https://qiita.com/ikedahideya/items/fe93f4d14cce95d0bfa6">Jiraの活用事例　～チケットの時間管理編～</a>
+を参考にして設定する。</p>
+<section id="id20">
+<h3>事前準備<a class="headerlink" href="#id20" title="Permalink to this heading">¶</a></h3>
+<p>初期設定で、タスクや課題に時間管理のアクションがついていないので、利用する課題タイプには全て付与する
+<img alt="" src="../_images/jira_time_checker.png" /></p>
+</section>
+<section id="id21">
+<h3>時間での見積もり<a class="headerlink" href="#id21" title="Permalink to this heading">¶</a></h3>
+<p>今回は、サブタスク2つを持つストーリを例にして時間見積りを追加していく。</p>
+<ul class="simple">
+<li><p>ストーリーB</p>
+<ul>
+<li><p>サブタスクX</p></li>
+<li><p>サブタスクY</p></li>
+</ul>
+</li>
+</ul>
+<section id="id22">
+<h4>サブタスクの時間見積もり<a class="headerlink" href="#id22" title="Permalink to this heading">¶</a></h4>
+<p>サブタスクについて時間を見積り、残時間に記入する。サブタスクXに3hをサブタスクYに7hを設定。</p>
+<p><img alt="" src="img/jira_subtask_time.pngpng" /></p>
+<p>ストーリーポイントの際には、親タスクに子タスクの合算ポイントは付与されなかったが、見積もり時間については親タスクにこタスクの合計値が表示される。今回は（3h+7h=10h=1d+2h)</p>
+<p><img alt="" src="../_images/jira_oyatask_time.png" /></p>
+</section>
+</section>
+<section id="id23">
+<h3>時間の記録<a class="headerlink" href="#id23" title="Permalink to this heading">¶</a></h3>
+<p>サブタスクについて、作業を行った場合、時間の管理に作業時間を見積もる。</p>
+<section id="id24">
+<h4>見積もり時間内の場合<a class="headerlink" href="#id24" title="Permalink to this heading">¶</a></h4>
+<p>3hの見積もりに対して作業時間を2h記録した場合、自動で残時間を算出してくれる。<br />
+<img alt="" src="../_images/jira_time_record.png" /></p>
+<p>サブタスクで記録をしておくと、親タスクにも作業時間を記録しておいてくれる。</p>
+</section>
+</section>
 </section>
 </section>
 
