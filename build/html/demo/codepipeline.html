@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloudformation用のcodepipelineを作成する &mdash; iac_2023 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="LambdaとEvent作成フロー" href="stack.html" />
+    <link rel="prev" title="gitlabとJIRAの比較" href="../gitOps/dev_flow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> iac_2023
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../record/record.html">活動記録</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/story.html">ストーリー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/book.html">情報収集</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">デモ:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cloudformation用のcodepipelineを作成する</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">前提</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#codecommit">codecommitの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">codecommitの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">ミラーリング用のユーザー作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">ミラーリング設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codeseriesrole">CodeSeriesに付与するRole</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#role">ビルドステージ Role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">デプロイステージ Role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#codepipeline-role">CodePipeline Role</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codebuild">codebuildの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#codebuildiamrole">codebuild用のIAMRole作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Codebuildの作成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">デプロイステージの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#iamrole">デプロイステージ用のIAMRole作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">デプロイステージの作成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codepipeline">codepipelineの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#codedepipelineiamrole">codedepipeline用のIAMRole作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#codedepipeline">Codedepipelineの作成</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pipeline">Pipelineの設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">ソースステージの設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">ビルドステージの設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">承認ステージの設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">デプロイステージの設定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#event">Eventの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">codedepipeline用のIAMRole作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Codedepipelineの作成</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id15">テンプレートファイル一覧</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id16">CodeCommitのミラーリングのためのユーザー作成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">CodePipelineのテンプレートファイル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#codeiam">Codeシリーズで利用されるIAMのテンプレートファイル</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stack.html">LambdaとEvent作成フロー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stack.html#id3">スタックの作成</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">iac_2023</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Cloudformation用のcodepipelineを作成する</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/demo/codepipeline.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cloudformationcodepipeline">
+<h1>Cloudformation用のcodepipelineを作成する<a class="headerlink" href="#cloudformationcodepipeline" title="Permalink to this heading">¶</a></h1>
+<p>gitlabでIaCを開発して、特定のブランチにマージすることで環境に自動でデプロイされるGitOpsを実現する。<br />
+そのためにCodeSeriesをAWSに作成し、CICDの環境を整え、gitlabとCICD環境を連携する。</p>
+<section id="id1">
+<h2>前提<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>前提</p>
+<ul class="simple">
+<li><p>環境がdev/prdの2環境存在</p></li>
+<li><p>developmentブランチにマージするとdevへリリース</p></li>
+<li><p>masterブランチにマージするとprdへリリース</p></li>
+</ul>
+<p>上記を踏まえ、変数とマッピングを準備しておく。</p>
+<ul class="simple">
+<li><p>変数</p>
+<ul>
+<li><p>EnvID</p>
+<ul>
+<li><p>環境名を作成されるリソースに付与する</p></li>
+<li><p>例えばdev環境に作成する場合はdevにすることで</p>
+<ul>
+<li><p>devと名前がついたCodeSeriesが作成される</p></li>
+<li><p>Pipelineはdevelopmentブランチを監視する</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>ProjectID</p>
+<ul>
+<li><p>CFNで管理する単位を作成されるリソースに付与する</p></li>
+<li><p>例えばSyoriAと言う名前を付与することで</p>
+<ul>
+<li><p>SyoriAと名前がついたCodeSeriesが作成される</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>マッピング</p>
+<ul>
+<li><p>ブランチはmasterとprd環境を紐づけている</p></li>
+<li><p>prdと言うEnvIDを付与したときに、masterブランチを監視させる</p></li>
+<li><p>このマッピングを利用すれば、どの環境にどのブランチを紐づけるか制御できる</p></li>
+<li><p>Mappingが利用されているのはCodePipelineとEventの部分</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Parameters</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">EnvID</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="w">      </span><span class="nt">AllowedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">dev</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">prd</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">ProjectID</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Mappings</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Mappings</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">BranchMap</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dev</span><span class="p">:</span>
+<span class="w">      </span><span class="s">&quot;name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;development&quot;</span>
+<span class="w">    </span><span class="nt">prd</span><span class="p">:</span>
+<span class="w">      </span><span class="s">&quot;name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;master&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="codecommit">
+<h2>codecommitの作成<a class="headerlink" href="#codecommit" title="Permalink to this heading">¶</a></h2>
+<p>gitlabで開発したテンプレートファイルをAWS上に同期するために、gitlabとcodecommitをミラーリングする。
+ミラーリングすることで、開発自体は多機能のgitlabで行うことができる。</p>
+<section id="id2">
+<h3>codecommitの作成<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>codecommit自体は、リポジトリNameを指定すれば作成される。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="c1"># --------------------------------------------------------#</span>
+<span class="w">  </span><span class="c1"># CodeCommit</span>
+<span class="w">  </span><span class="c1"># --------------------------------------------------------#</span>
+<span class="w">  </span><span class="nt">CodeCommitCFN</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::CodeCommit::Repository</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">RepositoryName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codecommit-${EnvID}-cfn-${ProjectID}&quot;</span>
+<span class="w">        </span><span class="nt">RepositoryDescription</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CFn</span><span class="nv"> </span><span class="s">Code</span><span class="nv"> </span><span class="s">Repo</span><span class="nv"> </span><span class="s">Mirrored</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">GitLab&quot;</span>
+<span class="w">    </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
+<span class="w">            </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>ミラーリング用のユーザー作成<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<p>codecommitとgitlabをミラーリングさせるために認証設定が必要となる。
+具体的には、codecommitへのアクセス権限のみを持つIAMポリシーを作成し、このポリシーのみをもつIAMユーザーを作成します。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeCommitUser</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AWS::IAM::User&#39;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">UserName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&#39;user-${EnvID}-codecommit-mirroring&#39;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+
+<span class="w">  </span><span class="nt">CodeCommitPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AWS::IAM::Policy&#39;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">PolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&#39;policy-${EnvID}-codecommit-mirroring&#39;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2012-10-17&#39;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Allow&#39;</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;codecommit:GitPull&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;codecommit:GitPush&#39;</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">      </span><span class="nt">Users</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitUser</span>
+</pre></div>
+</div>
+<p>このユーザーで認証情報を払い出し、この認証情報をgitlab側に設定することで、gitlabで加えられた変更をcodecommitに反映することができる。
+codecommit用の認証情報払い出し方法は以下でPasswordは自分でメモしておく。<br />
+また、IAMUserのスタックを削除する際に、払い出した情報が残っていると削除に失敗するので、削除する場合は、先に消しておく。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>aws iam create-service-specific-credential --user-name &lt;User_Name&gt; --service-name codecommit.amazonaws.com
+{
+    &quot;ServiceSpecificCredential&quot;: {
+……
+        &quot;ServiceName&quot;: &quot;codecommit.amazonaws.com&quot;,
+        &quot;ServiceUserName&quot;: &quot;xxxxxxxxxxxx&quot;,
+        &quot;ServicePassword&quot;: &quot;xxxxxxxxxxxx&quot;,
+……
+    }
+}
+</pre></div>
+</div>
+<p><img alt="" src="../_images/demo-codecommit-auth.png" /></p>
+</section>
+<section id="id4">
+<h3>ミラーリング設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<p>codecommitでHTTPSのURLを取得し、<code class="docutils literal notranslate"><span class="pre">ServiceUserName&#64;</span></code>をhtts://の後ろに挿入</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 取得したHTTPSのgitURL</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">-</span><span class="n">codecommit</span><span class="o">.</span><span class="n">ap</span><span class="o">-</span><span class="n">northeast</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span><span class="n">codecommit</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">cfn</span><span class="o">-</span><span class="n">ProjectX</span>
+
+<span class="c1"># 挿入後</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">codecommit</span><span class="o">-</span><span class="n">mirroring</span><span class="o">-</span><span class="n">at</span><span class="o">-</span><span class="n">XXXXXXXXXXXX</span><span class="nd">@git</span><span class="o">-</span><span class="n">codecommit</span><span class="o">.</span><span class="n">ap</span><span class="o">-</span><span class="n">northeast</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span><span class="n">codecommit</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">cfn</span><span class="o">-</span><span class="n">ProjectX</span>
+</pre></div>
+</div>
+<p>gitlab側で、設定からミラーリポジトリを開いて、各種情報を設定してミラーリングを行う。
+<img alt="" src="../_images/demo-mirroring.png" /></p>
+<ul class="simple">
+<li><p>URL：上記で作成した挿入後のURL</p></li>
+<li><p>ユーザー名：ServiceUserName</p></li>
+<li><p>パスワード：ServicePassword</p></li>
+</ul>
+</section>
+</section>
+<section id="codeseriesrole">
+<h2>CodeSeriesに付与するRole<a class="headerlink" href="#codeseriesrole" title="Permalink to this heading">¶</a></h2>
+<p>CodeSeriesを利用してCICD Pipelineを作成するにあたり、登場するRoleの役割を整理し、概論を述べておく。</p>
+<section id="role">
+<h3>ビルドステージ Role<a class="headerlink" href="#role" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Codepipelineで設定しているArtifactにアーティファクトをアップロードする必要があるため、S3へのアクセス権限が必要</p></li>
+<li><p>CodeBuildのログをcloudwatchのloggroupに配置する必要があるので、loggroupに関する権限が必要</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>デプロイステージ Role<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<p>今回はデプロイステージがCFNなので、CFNを実行するためのRoleになる。そのため、CFNで作成するリソースに対する権限が必要になる。
+気をつけなくてはいけないのは、更新やスタック作成失敗時のRollBackに備えて、リソースに対する削除の権限も付与する必要があるということである。
+例えば今回は、CFNでLambdaとEventBridgeを作成する権限と削除する権限を付与する必要がある。</p>
+</section>
+<section id="codepipeline-role">
+<h3>CodePipeline Role<a class="headerlink" href="#codepipeline-role" title="Permalink to this heading">¶</a></h3>
+<p>パイプラインが、ソースステージ、ビルドステージ、デプロイステージの実行者となる。そのため、各ステージにおける実行権限が必要である具体的には、以下</p>
+<ul class="simple">
+<li><p>アーティファクト</p>
+<ul>
+<li><p>パイプラインの各ステージ間でアーティファクト（ビルドの成果物やソースコード）を一時的に格納するためのストレージを利用する</p></li>
+<li><p>S3を指定する場合は、CodePipelineのRoleにS3に対する権限が必要</p></li>
+</ul>
+</li>
+<li><p>ソースステージ</p>
+<ul>
+<li><p>CodeCommitにアクセスをcodepipelineがするので、CodeCommitに対する権限が必要</p></li>
+</ul>
+</li>
+<li><p>ビルドステージ</p>
+<ul>
+<li><p>BuildProjectを事前に作成し、そのProjectを指定する形で実行する</p></li>
+<li><p>Projectを作成する際に、ServiceRoleとしてRoleを設定するためPassRoleは不要</p></li>
+<li><p>CodepipelineはビルドPJを指定して実行するのcodeBuildに対する権限は必要</p></li>
+</ul>
+</li>
+<li><p>デプロイステージ</p>
+<ul>
+<li><p>デプロイのタイプによるが、今回はCFNを利用する</p></li>
+<li><p>codepipelineの中でCFNの設定を行い、Roleを指定するので、pipelineからcfnに対するPassRoleが必要になる</p></li>
+<li><p>CFNの実行をcodepipelineが行うので、CFNに対する権限が必要</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="codebuild">
+<h2>codebuildの作成<a class="headerlink" href="#codebuild" title="Permalink to this heading">¶</a></h2>
+<section id="codebuildiamrole">
+<h3>codebuild用のIAMRole作成<a class="headerlink" href="#codebuildiamrole" title="Permalink to this heading">¶</a></h3>
+<p>前述の通り、Policyにはlogへのアクセス権限とS3へのアクセス権限を付与しておく。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeBuildCFnRole</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::IAM::Role</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">RoleName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;role-${EnvID}-codebuild-cfn&quot;</span>
+<span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2012-10-17</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Principal</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Service</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codebuild.amazonaws.com</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts:AssumeRole</span>
+<span class="w">      </span><span class="nt">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">      </span><span class="nt">ManagedPolicyArns</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuildCFnPolicy</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CodeBuild</span><span class="nv"> </span><span class="s">Base</span><span class="nv"> </span><span class="s">Role&quot;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatedBy</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+<span class="w">  </span><span class="c1"># Policy</span>
+<span class="w">  </span><span class="nt">CodeBuildCFnPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-codebuild-cfn&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogGroup</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogStream</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:PutLogEvents</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来はBuildの出力先であるloggroupに絞る</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:ListBucket</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:PutObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObjectVersion</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketAcl</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketLocation</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来はCodepipelineに指定したArtifactの出力先であるS3に絞る</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>Codebuildの作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<p>ビルドプロジェクトを作成しておく。このビルドPJをCodePipelineから呼び出す。</p>
+<ul class="simple">
+<li><p>Source</p>
+<ul>
+<li><p>Type: ソースコードのタイプ、CODEPIPELINEを指定することで、CODEPIPELINEから受け取ることが設定できる</p></li>
+</ul>
+</li>
+<li><p>Artifacts</p>
+<ul>
+<li><p>アーティファクトの出力先で、CODEPIPELINEを指定することで、CODEPIPELINEのAritifactへ出力する</p></li>
+</ul>
+</li>
+<li><p>Environment</p>
+<ul>
+<li><p>EnvironmentVariables：buildspec.yamlなどに渡す環境変数</p></li>
+</ul>
+</li>
+<li><p>LogsConfig</p>
+<ul>
+<li><p>ログの配信場所で、S3やloggroupが設定できる</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeBuildProjectCFN</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::CodeBuild::Project&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codebuild-${EnvID}-cfn-${ProjectID}&quot;</span>
+<span class="w">      </span><span class="nt">Source</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">InsecureSsl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CODEPIPELINE&quot;</span>
+<span class="w">      </span><span class="nt">Artifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">EncryptionDisabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codebuild-${EnvID}-cfn-${ProjectID}&quot;</span>
+<span class="w">        </span><span class="nt">Packaging</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NONE&quot;</span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CODEPIPELINE&quot;</span>
+<span class="w">      </span><span class="nt">Cache</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NO_CACHE&quot;</span>
+<span class="w">      </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">ComputeType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BUILD_GENERAL1_SMALL&quot;</span>
+<span class="w">        </span><span class="nt">Image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws/codebuild/standard:5.0&quot;</span>
+<span class="w">        </span><span class="nt">ImagePullCredentialsType</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CODEBUILD&quot;</span>
+<span class="w">        </span><span class="nt">PrivilegedMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LINUX_CONTAINER&quot;</span>
+<span class="w">        </span><span class="nt">EnvironmentVariables</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;EnvID&quot;</span>
+<span class="w">            </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PLAINTEXT&quot;</span>
+<span class="w">            </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnvID</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AccountId&quot;</span>
+<span class="w">            </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PLAINTEXT&quot;</span>
+<span class="w">            </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::AccountId</span>
+<span class="w">      </span><span class="nt">ServiceRole</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-codebuild-cfn&quot;</span>
+<span class="w">      </span><span class="nt">TimeoutInMinutes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">      </span><span class="nt">QueuedTimeoutInMinutes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">480</span>
+<span class="w">      </span><span class="nt">EncryptionKey</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3&quot;</span>
+<span class="w">      </span><span class="nt">BadgeEnabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">LogsConfig</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">CloudWatchLogs</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ENABLED&quot;</span>
+<span class="w">        </span><span class="nt">S3Logs</span><span class="p">:</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DISABLED&quot;</span>
+<span class="w">          </span><span class="nt">EncryptionDisabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">Visibility</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PRIVATE&quot;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2>デプロイステージの作成<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
+<section id="iamrole">
+<h3>デプロイステージ用のIAMRole作成<a class="headerlink" href="#iamrole" title="Permalink to this heading">¶</a></h3>
+<p>デプロイステージのCFNが、lambdaとeventbridgeとIAMを作成したり、付与したりするので権限をつけておく。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeDeployCFnRole</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::IAM::Role</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">RoleName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;role-${EnvID}-codedeploy-cfn&quot;</span>
+<span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2012-10-17</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Principal</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Service</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation.amazonaws.com</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts:AssumeRole</span>
+<span class="w">      </span><span class="nt">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">      </span><span class="nt">ManagedPolicyArns</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeDeployCFnPolicy</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CodeDeploy</span><span class="nv"> </span><span class="s">Base</span><span class="nv"> </span><span class="s">service</span><span class="nv"> </span><span class="s">role&quot;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatedBy</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+<span class="w">  </span><span class="c1"># Policy</span>
+<span class="w">  </span><span class="nt">CodeDeployCFnPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-codedeploy-cfn&quot;</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;lambda:CreateFunction&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;lambda:UpdateFunctionCode&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;lambda:GetFunction&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;lambda:InvokeFunction&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;lambda:DeleteFunction&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;events:PutRule&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;events:DeleteRule&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;events:PutTargets&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;events:RemoveTargets&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;events:DescribeRule&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:CreateRole&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:AttachRolePolicy&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:PassRole&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:PutRolePolicy&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:DeleteRole&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:DetachRolePolicy&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;iam:DeleteRolePolicy&#39;</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>デプロイステージの作成<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<p>デプロイステージでは、CFNの実行を行う。CFNを実行する際に特殊な設定として<code class="docutils literal notranslate"><span class="pre">ActionMode</span></code>と<code class="docutils literal notranslate"><span class="pre">Capabilities</span></code>があるので理解しておくと良い。
+Action ModeはCFNを実行する際に、すぐに更新するのか、チェンジセットを作ってから実行するかなど、実行方法を設定できる。
+Capabilitiesは、CFNがリソースを制御すると言う強力な力を持っているので、勝手にIAMなどを作成しないように、CFN側でも許可する設定である。</p>
+<ul class="simple">
+<li><p>ActionMode:CFNを実行する際のモード</p>
+<ul>
+<li><p>CREATE_UPDATE：スタックが存在しない場合新規作成、存在する場合は更新を行う</p></li>
+<li><p>CHANGE_SET_REPLACE：スタックとテンプレートに基づいて、変更セットを作成する</p></li>
+<li><p>CHANGE_SET_EXECUTE：変更セットを実行する</p></li>
+<li><p>DELETE_ONLY：指定したスタックを削除する</p></li>
+<li><p>REPLACE_ON_FAILURE：スタックがない場合は作成、スタックが以下の状態なら削除して作成、スタックがある場合は、更新。更新ロールバックでも削除されるのでテストで利用程度</p>
+<ul>
+<li><p>ROLLBACK_FAILED（ロールバック失敗）</p></li>
+<li><p>CREATE_FAILED（作成失敗）</p></li>
+<li><p>DELETE_FAILED（削除失敗）</p></li>
+<li><p>UPDATE_ROLLBACK_FAILED（更新ロールバック失敗）</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Capabilities: CFNが特定の操作を行うための必要な追加権限</p>
+<ul>
+<li><p>CAPABILITY_IAM：CFNを利用してIAMを作成することができるようになる</p></li>
+<li><p>CAPABILITY_NAMED_IAM：CFNを利用して、特定の名前を付与したIAMを作成することができるようになる</p></li>
+<li><p>CAPABILITY_AUTO_EXPAND：NestedStackなどを作成することができるようになる</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deploy&quot;</span>
+<span class="nt">Actions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deploy&quot;</span>
+<span class="w">    </span><span class="nt">ActionTypeId</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">Category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Deploy&quot;</span>
+<span class="w">        </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS&quot;</span>
+<span class="w">        </span><span class="nt">Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CloudFormation&quot;</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">    </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">ActionMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CREATE_UPDATE&quot;</span>
+<span class="w">        </span><span class="nt">Capabilities</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CAPABILITY_NAMED_IAM&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">RoleArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-codedeploy-cfn&quot;</span>
+<span class="w">        </span><span class="nt">StackName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;cfnstack-${EnvID}-lambda-app&quot;</span><span class="w"> </span><span class="c1">#作成されるスタック名</span>
+<span class="w">        </span><span class="nt">TemplatePath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BuildArtifact::root-stack-lambda.yaml&quot;</span><span class="w"> </span><span class="c1">#実行するテンプレートファイル</span>
+<span class="w">        </span><span class="nt">TemplateConfiguration</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BuildArtifact::parameter.json&quot;</span><span class="w"> </span><span class="c1">#実行時に利用するパラメータ一覧</span>
+<span class="w">    </span><span class="nt">InputArtifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BuildArtifact&quot;</span>
+<span class="w">    </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
+<span class="w">    </span><span class="nt">Namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DeployVariables&quot;</span>
+<span class="w">    </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codepipeline">
+<h2>codepipelineの作成<a class="headerlink" href="#codepipeline" title="Permalink to this heading">¶</a></h2>
+<section id="codedepipelineiamrole">
+<h3>codedepipeline用のIAMRole作成<a class="headerlink" href="#codedepipelineiamrole" title="Permalink to this heading">¶</a></h3>
+<p><a class="reference external" href="https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/security-iam.html#how-to-custom-role">公式サイト</a>を引用して作成すると良い。
+ただし、PassRoleの権限が強いので、以下のようにする方が推奨と思われる。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="c1"># ----------------------------------------------------------#</span>
+<span class="w">  </span><span class="c1"># CodePipeline</span>
+<span class="w">  </span><span class="c1"># ----------------------------------------------------------#</span>
+<span class="w">  </span><span class="c1"># Role</span>
+<span class="w">  </span><span class="nt">CodePipelineCFnRole</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::IAM::Role</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">RoleName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;role-${EnvID}-codepipeline-cfn&quot;</span>
+<span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2012-10-17</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Principal</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Service</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codepipeline.amazonaws.com</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts:AssumeRole</span>
+<span class="w">      </span><span class="nt">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">      </span><span class="nt">ManagedPolicyArns</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodePipelineCFnPolicy</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Pipeline</span><span class="nv"> </span><span class="s">Role</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">CFn</span><span class="nv"> </span><span class="s">Stack&quot;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatedBy</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+<span class="w">  </span><span class="c1"># Policy</span>
+<span class="w">  </span><span class="c1"># https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/security-iam.html#how-to-custom-role</span>
+<span class="w">  </span><span class="nt">CodePipelineCFnPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-codepipeline-cfn&quot;</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1">#ArtifactのためのS3に対する権限</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:PutObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObjectVersion</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketAcl</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketLocation</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来は対象のバケットに絞る</span>
+
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1">#CodeCommitに対する権限</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:CancelUploadArchive</span><span class="w"> </span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:GetBranch</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:GetCommit</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:GetRepository</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:GetUploadArchiveStatus</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecommit:UploadArchive</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来は対象のCodeCommitに絞る</span>
+
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1">#CodeBuildに対する権限</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codebuild:BatchGetBuilds</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codebuild:StartBuild</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来は対象のBuildPJに絞る</span>
+
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1">#CodePipelineがCFNに対してPassRoleの権限</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">iam:PassRole</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来はCFNに付与するRoleを絞る</span>
+<span class="w">            </span><span class="nt">Condition</span><span class="p">:</span><span class="w"> </span><span class="c1">#CFNだけにPassRoleするように制限</span>
+<span class="w">              </span><span class="nt">StringEqualsIfExists</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">iam:PassedToService</span><span class="p">:</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation.amazonaws.com</span>
+
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="c1">#CodePipelineがCFNを実行するための権限</span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:CreateStack</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:DeleteStack</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:DescribeStacks</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:UpdateStack</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:CreateChangeSet</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:DeleteChangeSet</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:DescribeChangeSet</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:ExecuteChangeSet</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:SetStackPolicy</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloudformation:ValidateTemplate</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来は対象のCFNに絞る</span>
+</pre></div>
+</div>
+</section>
+<section id="codedepipeline">
+<h3>Codedepipelineの作成<a class="headerlink" href="#codedepipeline" title="Permalink to this heading">¶</a></h3>
+<section id="pipeline">
+<h4>Pipelineの設定<a class="headerlink" href="#pipeline" title="Permalink to this heading">¶</a></h4>
+<p>ArtifactStoreで、各ステージの成果物を配置するストレージを指定する。今回はS3を指定。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodePipelineCFN</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::CodePipeline::Pipeline&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codepipeline-${EnvID}-cfn-${ProjectID}&quot;</span>
+<span class="w">      </span><span class="nt">RoleArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-codepipeline-cfn&quot;</span>
+<span class="w">      </span><span class="nt">ArtifactStore</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">Location</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;s3-${EnvID}-codepipeline-artifact&quot;</span>
+<span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S3&quot;</span>
+<span class="w">        </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
+<span class="w">            </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h4>ソースステージの設定<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h4>
+<p>ステージでは、CodeCommitを指定して、設定として、どのブランチを監視するかを指定することができる。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">      </span><span class="nt">Stages</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
+<span class="w">          </span><span class="nt">Actions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
+<span class="w">              </span><span class="nt">ActionTypeId</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">Category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
+<span class="w">                </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS&quot;</span>
+<span class="w">                </span><span class="nt">Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CodeCommit&quot;</span>
+<span class="w">                </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">              </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">RepositoryName</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitCFN.Name</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">BranchName</span><span class="p">:</span><span class="w"> </span><span class="kt">!FindInMap</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">BranchMap</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="nv">EnvID</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">                </span><span class="nt">OutputArtifactFormat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CODE_ZIP&quot;</span>
+<span class="w">                </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"> </span><span class="c1">#今回トリガーはEvent Bridgeのためfalse</span>
+<span class="w">                </span><span class="nt">OutputArtifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">                    </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceArtifact&quot;</span><span class="w"> </span><span class="c1">#ソースステージのアウトプットArtifact</span>
+<span class="w">                </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
+<span class="w">                </span><span class="nt">Namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceVariables&quot;</span>
+<span class="w">                </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h4>ビルドステージの設定<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h4>
+<p>事前に作成してビルドPJを利用して実行する。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Build&quot;</span>
+<span class="w">          </span><span class="nt">Actions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Build&quot;</span>
+<span class="w">              </span><span class="nt">ActionTypeId</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">Category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Build&quot;</span>
+<span class="w">                </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS&quot;</span>
+<span class="w">                </span><span class="nt">Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CodeBuild&quot;</span>
+<span class="w">                </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">              </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">ProjectName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuildProjectCFN</span>
+<span class="w">              </span><span class="nt">InputArtifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceArtifact&quot;</span>
+<span class="w">              </span><span class="nt">OutputArtifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BuildArtifact&quot;</span>
+<span class="w">              </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
+<span class="w">              </span><span class="nt">Namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;BuildVariables&quot;</span>
+<span class="w">              </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h4>承認ステージの設定<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h4>
+<p>手動での承認プロセスを挟むことで、意図しないPushなどによるデプロイを防ぐことができる。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Approval&quot;</span>
+<span class="w">            </span><span class="nt">Actions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">                </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Approval&quot;</span>
+<span class="w">                </span><span class="nt">ActionTypeId</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">Category</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Approval&quot;</span>
+<span class="w">                  </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS&quot;</span>
+<span class="w">                  </span><span class="nt">Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Manual&quot;</span>
+<span class="w">                  </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">                </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">NotificationArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:sns-${EnvID}-codepipeline-approval-SRE&quot;</span>
+<span class="w">                </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
+<span class="w">                </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>デプロイステージの設定<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h4>
+<p>前セクション：デプロイステージの作成を参照</p>
+</section>
+</section>
+</section>
+<section id="event">
+<h2>Eventの作成<a class="headerlink" href="#event" title="Permalink to this heading">¶</a></h2>
+<section id="id13">
+<h3>codedepipeline用のIAMRole作成<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+</section>
+<section id="id14">
+<h3>Codedepipelineの作成<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+</section>
+<section id="id15">
+<h1>テンプレートファイル一覧<a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h1>
+<section id="id16">
+<h2>CodeCommitのミラーリングのためのユーザー作成<a class="headerlink" href="#id16" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">AWSTemplateFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2010-09-09&#39;</span>
+<span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IAM user with CodeCommit access</span>
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Parameters</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">EnvID</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="w">      </span><span class="nt">AllowedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">dev</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">prd</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Resources</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Resources</span><span class="p">:</span>
+
+<span class="w">  </span><span class="nt">CodeCommitUser</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AWS::IAM::User&#39;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">UserName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&#39;user-${EnvID}-codecommit-mirroring&#39;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+
+<span class="w">  </span><span class="nt">CodeCommitPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AWS::IAM::Policy&#39;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">PolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&#39;policy-${EnvID}-codecommit-mirroring&#39;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2012-10-17&#39;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Allow&#39;</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;codecommit:GitPull&#39;</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;codecommit:GitPush&#39;</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">      </span><span class="nt">Users</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitUser</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h2>CodePipelineのテンプレートファイル<a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h2>
+<p>上記のCodeCommit/CodeBuild/CodeDeploy/CodePipelineを作成するテンプレートファイル</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">AWSTemplateFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2010-09-09&quot;</span>
+
+<span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Codepipeline</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">lambda</span><span class="nv"> </span><span class="s">stack&quot;</span>
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Parameters</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">EnvID</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="w">      </span><span class="nt">AllowedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">dev</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">prd</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">ProjectID</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+
+
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="c1"># Mappings</span>
+<span class="c1"># ------------------------------------------------------------#</span>
+<span class="nt">Mappings</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">BranchMap</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dev</span><span class="p">:</span>
+<span class="w">      </span><span class="s">&quot;name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;development&quot;</span>
+<span class="w">    </span><span class="nt">prd</span><span class="p">:</span>
+<span class="w">      </span><span class="s">&quot;name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;master&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="codeiam">
+<h2>Codeシリーズで利用されるIAMのテンプレートファイル<a class="headerlink" href="#codeiam" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../gitOps/dev_flow.html" class="btn btn-neutral float-left" title="gitlabとJIRAの比較" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stack.html" class="btn btn-neutral float-right" title="LambdaとEvent作成フロー" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, misaki.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

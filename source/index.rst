@@ -26,3 +26,12 @@
    gitOps/dev_flow.md
 
 
+.. toctree::
+   :maxdepth: 2
+   :caption: デモ:
+
+   demo/codepipeline.md
+   demo/stack.md
+   
+
+
