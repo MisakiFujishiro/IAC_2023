@@ -12,7 +12,9 @@
    :caption: 活動記録:
    
    record/record.md
+   record/story.md
    record/book.md
+
 
 .. toctree::
    :maxdepth: 2

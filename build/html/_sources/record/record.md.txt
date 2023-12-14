@@ -34,31 +34,52 @@ IaCの導入・運用に関する課題と対策を
         - CICDのPipelineは必須で準備
 
 
+
 ## 12月
+### ストーリー確定
+[ストーリー検討]()セクション参照
+
 ### gitlabとjiraの利用方法をつかながら整理
 - jiraでできること
 - jira利用した開発の基本フローを整理
 - gitlabとjiraの組み合わせでできること
-- gitlabとjiraの組み合わせで開発の基本フローを整理
-### IaCと課題管理の統合
-- プロジェクト管理という目線でいうと、JIRAとgitlabのPJを連携するのが好ましいのでは？
+- 本格的にJIRAとgitlabのPJを連携してみる
+
+
+### スターターセット作成開始
+- codecommit
+- codebuild
+- codedeploy
+- codepipeline
+- S3
+- IAM
+    - Mirroring User
+    - codebuild Role
+    - CodeDeploy Role
+    - CodePipeline Role
+- スタック
+    - Lambda-A
+    - Lambda-B
+    - Event-A
+    - Event-B
+    - Role
 
 
 
 ## 1月
-### 開発フロー確定
-- 本格的にJIRAとgitlabのPJを連携してみる
+### スターターセット作成完成
 
-### デモ作成
-- 実際にJRIAの課題から IaCの変更までのデモを作成
+
+### デモストーリー検討
+
+
 
 ## 2月
 ### 運用しやすい IaCとは？
-- 上記までで、業務側の課題管理との連携およびIaCを運用するための流れを整理。
-- 実際に運用しやすい IaCとはどのようなものになるのかを一気通貫で整理していく
-    - IaCとCICDはセットにする
-    - なるべくConditionは利用しない
-    - 
+
 
 
 ## 3月
+- 発表練習
+
+

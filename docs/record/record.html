@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="情報収集" href="book.html" />
+    <link rel="next" title="ストーリー" href="story.html" />
     <link rel="prev" title="2023 塾活動 IaCの運用" href="../index.html" /> 
 </head>
 
@@ -54,22 +54,24 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">12月</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">gitlabとjiraの利用方法をつかながら整理</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">IaCと課題管理の統合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">ストーリー確定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">gitlabとjiraの利用方法をつかながら整理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">スターターセット作成開始</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">1月</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id10">開発フロー確定</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">デモ作成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">1月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">スターターセット作成完成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">デモストーリー検討</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">2月</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id13">運用しやすい IaCとは？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">2月</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">運用しやすい IaCとは？</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">3月</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">3月</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="story.html">ストーリー</a></li>
 <li class="toctree-l1"><a class="reference internal" href="book.html">情報収集</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
@@ -174,54 +176,66 @@
 <section id="id6">
 <h2>12月<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
 <section id="id7">
-<h3>gitlabとjiraの利用方法をつかながら整理<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3>ストーリー確定<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<p><a class="reference internal" href="#"><span class="xref myst">ストーリー検討</span></a>セクション参照</p>
+</section>
+<section id="id8">
+<h3>gitlabとjiraの利用方法をつかながら整理<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>jiraでできること</p></li>
 <li><p>jira利用した開発の基本フローを整理</p></li>
 <li><p>gitlabとjiraの組み合わせでできること</p></li>
-<li><p>gitlabとjiraの組み合わせで開発の基本フローを整理</p></li>
-</ul>
-</section>
-<section id="id8">
-<h3>IaCと課題管理の統合<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
-<ul class="simple">
-<li><p>プロジェクト管理という目線でいうと、JIRAとgitlabのPJを連携するのが好ましいのでは？</p></li>
-</ul>
-</section>
-</section>
-<section id="id9">
-<h2>1月<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h2>
-<section id="id10">
-<h3>開発フロー確定<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
-<ul class="simple">
 <li><p>本格的にJIRAとgitlabのPJを連携してみる</p></li>
 </ul>
 </section>
-<section id="id11">
-<h3>デモ作成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<section id="id9">
+<h3>スターターセット作成開始<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>実際にJRIAの課題から IaCの変更までのデモを作成</p></li>
-</ul>
-</section>
-</section>
-<section id="id12">
-<h2>2月<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h2>
-<section id="id13">
-<h3>運用しやすい IaCとは？<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
-<ul class="simple">
-<li><p>上記までで、業務側の課題管理との連携およびIaCを運用するための流れを整理。</p></li>
-<li><p>実際に運用しやすい IaCとはどのようなものになるのかを一気通貫で整理していく</p>
+<li><p>codecommit</p></li>
+<li><p>codebuild</p></li>
+<li><p>codedeploy</p></li>
+<li><p>codepipeline</p></li>
+<li><p>S3</p></li>
+<li><p>IAM</p>
 <ul>
-<li><p>IaCとCICDはセットにする</p></li>
-<li><p>なるべくConditionは利用しない</p></li>
-<li></li>
+<li><p>Mirroring User</p></li>
+<li><p>codebuild Role</p></li>
+<li><p>CodeDeploy Role</p></li>
+<li><p>CodePipeline Role</p></li>
+</ul>
+</li>
+<li><p>スタック</p>
+<ul>
+<li><p>Lambda-A</p></li>
+<li><p>Lambda-B</p></li>
+<li><p>Event-A</p></li>
+<li><p>Event-B</p></li>
+<li><p>Role</p></li>
 </ul>
 </li>
 </ul>
 </section>
 </section>
+<section id="id10">
+<h2>1月<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
+<section id="id11">
+<h3>スターターセット作成完成<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+</section>
+<section id="id12">
+<h3>デモストーリー検討<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+<section id="id13">
+<h2>2月<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h2>
 <section id="id14">
-<h2>3月<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h2>
+<h3>運用しやすい IaCとは？<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+<section id="id15">
+<h2>3月<a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>発表練習</p></li>
+</ul>
 </section>
 </section>
 
@@ -230,7 +244,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="2023 塾活動 IaCの運用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="book.html" class="btn btn-neutral float-right" title="情報収集" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="story.html" class="btn btn-neutral float-right" title="ストーリー" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
