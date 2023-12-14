@@ -178,7 +178,8 @@ CodeSeriesを利用してCICD Pipelineを作成するにあたり、登場する
     - CFNの実行をcodepipelineが行うので、CFNに対する権限が必要
 
 
-
+## Artifact用のS3作成
+★★★★★未対応★★★★★
 
 ## codebuildの作成
 ### codebuild用のIAMRole作成

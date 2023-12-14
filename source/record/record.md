@@ -46,10 +46,11 @@ IaCの導入・運用に関する課題と対策を
 - 本格的にJIRAとgitlabのPJを連携してみる
 
 ### スターターセット作成開始
-- codecommit
-- codebuild
-- codedeploy
+- codecommit【完了】
+- codebuild【完了】
+- codedeploy【完了】
 - codepipeline
+- Event
 - S3
 - IAM
     - Mirroring User
