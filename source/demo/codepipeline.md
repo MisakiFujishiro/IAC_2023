@@ -515,19 +515,14 @@ ArtifactStoreで、各ステージの成果物を配置するストレージを�
       Name: !Sub "codepipeline-${EnvID}-cfn-${ProjectID}"
       RoleArn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-codepipeline-cfn"
       ArtifactStore: 
-        Location: !Sub "s3-${EnvID}-codepipeline-artifact"
+        Location: !Sub "s3-iac-fujishiroms-${EnvID}-codepipeline-artifact"
         Type: "S3"
-        Tags:
-          - Key: "CreatedBy"
-            Value: !Ref "AWS::StackName"
 ```
 
 
 #### ソースステージの設定
 ステージでは、CodeCommitを指定して、設定として、どのブランチを監視するかを指定することができる。
 ```yaml
-      Stages: 
-        - 
           Name: "Source"
           Actions: 
             - 
@@ -538,16 +533,16 @@ ArtifactStoreで、各ステージの成果物を配置するストレージを�
                 Provider: "CodeCommit"
                 Version: "1"
               Configuration: 
-                RepositoryName: !GetAtt CodeCommitCFN.Name 
                 BranchName: !FindInMap [ BranchMap, !Ref EnvID, name ]
                 OutputArtifactFormat: "CODE_ZIP"
                 PollForSourceChanges: "false" #今回トリガーはEvent Bridgeのためfalse
-                OutputArtifacts: 
-                  - 
-                    Name: "SourceArtifact" #ソースステージのアウトプットArtifact
-                Region: !Ref AWS::Region
-                Namespace: "SourceVariables"
-                RunOrder: 1
+                RepositoryName: !GetAtt CodeCommitCFN.Name 
+              OutputArtifacts: 
+                - 
+                  Name: "SourceArtifact" #ソースステージのアウトプットArtifact
+              Region: !Ref AWS::Region
+              Namespace: "SourceVariables"
+              RunOrder: 1
 ```
 
 #### ビルドステージの設定
@@ -603,9 +598,78 @@ ArtifactStoreで、各ステージの成果物を配置するストレージを�
 
 ## Eventの作成
 ### codedepipeline用のIAMRole作成
-### Codedepipelineの作成
+- Roleの引き受け：events.amazon.com
+- 権限：CodePipelineを実行するための権限
+
+```yaml
+  EventsRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: "/"
+      RoleName: !Sub "role-${EnvID}-eventbridge-codepipeline-exec"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      MaxSessionDuration: 3600
+      ManagedPolicyArns: 
+        - !Ref EventsCodepipelineExecPolicy
+      Description: "Role for eventbridge codepipeline exec"
+      Tags:
+        - 
+          Key: CreatedBy
+          Value: !Ref "AWS::StackName"
+
+  EventsCodepipelineExecPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "policy-${EnvID}-eventbridge-codepipeline-exec"
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - codepipeline:StartPipelineExecution
+            Resource:
+              - "*"
+      Description: "Policy for eventbridge codepipeline exec"
 
 
+```
+### Eventの作成
+EventBridgeを利用して、特定のイベントが発生したときに、指定されたターゲット（この場合はAWS CodePipeline）をトリガーする設定を行う。
+
+```yaml
+  EventsRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      Name: !Sub "event-rule-${EnvID}-codepipeline-exec-cfn-${ProjectID}"
+      EventPattern: # Eventをトリガーするパターン
+        source: #対象はcodecommit
+          - aws.codecommit
+        detail-type:
+          - CodeCommit Repository State Change
+        resources:
+          - !GetAtt CodeCommitCFN.Arn 
+        detail: #対象の中でのトリガー詳細
+          event:
+            - referenceUpdated #ブランチのアップデート
+          referenceType:
+            - branch
+          referenceName:
+            - !FindInMap [ BranchMap, !Ref EnvID, name ]
+      Targets: #Eventが実行するのcodepipeline
+        - Arn: !Sub "arn:${AWS::Partition}:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineCFN}"
+          Id: !Sub "codepipeline-${EnvID}-cfn-${ProjectID}"
+          RoleArn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-eventbridge-codepipeline-exec"
+```
 
 
 

@@ -22,6 +22,7 @@
 
    gitOps/gitlab.md
    gitOps/jira.md
+   gitOps/jira_gitlab.md
    gitOps/strategy.md
    gitOps/dev_flow.md
 

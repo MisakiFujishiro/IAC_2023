@@ -49,6 +49,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html">参考サイト</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
@@ -94,7 +95,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#event">Eventの作成</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id13">codedepipeline用のIAMRole作成</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14">Codedepipelineの作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Eventの作成</a></li>
 </ul>
 </li>
 </ul>
@@ -705,20 +706,15 @@ Capabilitiesは、CFNがリソースを制御すると言う強力な力を持�
 <span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codepipeline-${EnvID}-cfn-${ProjectID}&quot;</span>
 <span class="w">      </span><span class="nt">RoleArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-codepipeline-cfn&quot;</span>
 <span class="w">      </span><span class="nt">ArtifactStore</span><span class="p">:</span><span class="w"> </span>
-<span class="w">        </span><span class="nt">Location</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;s3-${EnvID}-codepipeline-artifact&quot;</span>
+<span class="w">        </span><span class="nt">Location</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;s3-iac-fujishiroms-${EnvID}-codepipeline-artifact&quot;</span>
 <span class="w">        </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S3&quot;</span>
-<span class="w">        </span><span class="nt">Tags</span><span class="p">:</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CreatedBy&quot;</span>
-<span class="w">            </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="id9">
 <h4>ソースステージの設定<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h4>
 <p>ステージでは、CodeCommitを指定して、設定として、どのブランチを監視するかを指定することができる。</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">      </span><span class="nt">Stages</span><span class="p">:</span><span class="w"> </span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
-<span class="w">          </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">          </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
 <span class="w">          </span><span class="nt">Actions</span><span class="p">:</span><span class="w"> </span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span>
 <span class="w">              </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Source&quot;</span>
@@ -728,16 +724,16 @@ Capabilitiesは、CFNがリソースを制御すると言う強力な力を持�
 <span class="w">                </span><span class="nt">Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CodeCommit&quot;</span>
 <span class="w">                </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
 <span class="w">              </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
-<span class="w">                </span><span class="nt">RepositoryName</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitCFN.Name</span><span class="w"> </span>
 <span class="w">                </span><span class="nt">BranchName</span><span class="p">:</span><span class="w"> </span><span class="kt">!FindInMap</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">BranchMap</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="nv">EnvID</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="p p-Indicator">]</span>
 <span class="w">                </span><span class="nt">OutputArtifactFormat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CODE_ZIP&quot;</span>
 <span class="w">                </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"> </span><span class="c1">#今回トリガーはEvent Bridgeのためfalse</span>
-<span class="w">                </span><span class="nt">OutputArtifacts</span><span class="p">:</span><span class="w"> </span>
-<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span>
-<span class="w">                    </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceArtifact&quot;</span><span class="w"> </span><span class="c1">#ソースステージのアウトプットArtifact</span>
-<span class="w">                </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
-<span class="w">                </span><span class="nt">Namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceVariables&quot;</span>
-<span class="w">                </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">                </span><span class="nt">RepositoryName</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitCFN.Name</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">OutputArtifacts</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">                  </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceArtifact&quot;</span><span class="w"> </span><span class="c1">#ソースステージのアウトプットArtifact</span>
+<span class="w">              </span><span class="nt">Region</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Region</span>
+<span class="w">              </span><span class="nt">Namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SourceVariables&quot;</span>
+<span class="w">              </span><span class="nt">RunOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 </pre></div>
 </div>
 </section>
@@ -798,9 +794,78 @@ Capabilitiesは、CFNがリソースを制御すると言う強力な力を持�
 <h2>Eventの作成<a class="headerlink" href="#event" title="Permalink to this heading">¶</a></h2>
 <section id="id13">
 <h3>codedepipeline用のIAMRole作成<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Roleの引き受け：events.amazon.com</p></li>
+<li><p>権限：CodePipelineを実行するための権限</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">EventsRuleRole</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::IAM::Role</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">RoleName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;role-${EnvID}-eventbridge-codepipeline-exec&quot;</span>
+<span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2012-10-17</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Principal</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Service</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">events.amazonaws.com</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sts:AssumeRole</span>
+<span class="w">      </span><span class="nt">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">      </span><span class="nt">ManagedPolicyArns</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EventsCodepipelineExecPolicy</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Role</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">eventbridge</span><span class="nv"> </span><span class="s">codepipeline</span><span class="nv"> </span><span class="s">exec&quot;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatedBy</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+
+<span class="w">  </span><span class="nt">EventsCodepipelineExecPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-eventbridge-codepipeline-exec&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codepipeline:StartPipelineExecution</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Policy</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">eventbridge</span><span class="nv"> </span><span class="s">codepipeline</span><span class="nv"> </span><span class="s">exec&quot;</span>
+</pre></div>
+</div>
 </section>
 <section id="id14">
-<h3>Codedepipelineの作成<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<h3>Eventの作成<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<p>EventBridgeを利用して、特定のイベントが発生したときに、指定されたターゲット（この場合はAWS CodePipeline）をトリガーする設定を行う。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">EventsRule</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Events::Rule</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;event-rule-${EnvID}-codepipeline-exec-cfn-${ProjectID}&quot;</span>
+<span class="w">      </span><span class="nt">EventPattern</span><span class="p">:</span><span class="w"> </span><span class="c1"># Eventをトリガーするパターン</span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="c1">#対象はcodecommit</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws.codecommit</span>
+<span class="w">        </span><span class="nt">detail-type</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommit Repository State Change</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeCommitCFN.Arn</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">detail</span><span class="p">:</span><span class="w"> </span><span class="c1">#対象の中でのトリガー詳細</span>
+<span class="w">          </span><span class="nt">event</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">referenceUpdated</span><span class="w"> </span><span class="c1">#ブランチのアップデート</span>
+<span class="w">          </span><span class="nt">referenceType</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">branch</span>
+<span class="w">          </span><span class="nt">referenceName</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!FindInMap</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">BranchMap</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="nv">EnvID</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">name</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">Targets</span><span class="p">:</span><span class="w"> </span><span class="c1">#Eventが実行するのcodepipeline</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Arn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineCFN}&quot;</span>
+<span class="w">          </span><span class="nt">Id</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;codepipeline-${EnvID}-cfn-${ProjectID}&quot;</span>
+<span class="w">          </span><span class="nt">RoleArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:${AWS::Partition}:iam::${AWS::AccountId}:role/role-${EnvID}-eventbridge-codepipeline-exec&quot;</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
