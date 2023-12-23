@@ -264,7 +264,9 @@ codecommit自体は、リポジトリNameを指定すれば作成される。
               - s3:GetObjectVersion
               - s3:GetBucketAcl
               - s3:GetBucketLocation
-            Resource: !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact" #Codepipelineで指定したArtifactの出力先であるS3に絞る
+            Resource: 
+              - !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact" #Codepipelineで指定したArtifactの出力先であるS3に絞る
+              - !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact/*" #Codepipelineで指定したArtifactの出力先であるS3に絞る
       Description: ""
 ```
 
@@ -293,6 +295,13 @@ ArtifactStoreで、各ステージの成果物を配置するストレージを�
         Location: !Sub "s3-${EnvID}-codepipeline-artifact"
         Type: "S3"
 ```
+### Artifactの様子
+Pipelineを動かすと、以下のようにS3にArtifact用のフォルダが作成される
+![](../img/demo-s3-artifact.png)
+
+- SourceArti: 中身を確認すると、CodeCommitに含まれるファイルがアップロードされている
+- BuildArti: 中身を確認すると、buildspec.yamlでArtifactとして指定したファイルがアップロードされている。
+
 
 
 ### ソースステージの設定
@@ -451,25 +460,28 @@ CFNで作成したいリソースに合わせてカスタマイズする。今�
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
-            Action:
-              - 'lambda:CreateFunction'
-              - 'lambda:UpdateFunctionCode'
-              - 'lambda:GetFunction'
-              - 'lambda:InvokeFunction'
-              - 'lambda:DeleteFunction'
-              - 'events:PutRule'
-              - 'events:DeleteRule'
-              - 'events:PutTargets'
-              - 'events:RemoveTargets'
-              - 'events:DescribeRule'
-              - 'iam:CreateRole'
-              - 'iam:AttachRolePolicy'
-              - 'iam:PassRole'
-              - 'iam:PutRolePolicy'
-              - 'iam:DeleteRole'
-              - 'iam:DetachRolePolicy'
-              - 'iam:DeleteRolePolicy'
+            Action: #CodePipelineを通じて、作成するリソースに関する権限に限定(権限が強力になるので運用に注意)
+              - 'iam:GetRole'               #Roleの情報を取得
+              - 'iam:CreateRole'            #Roleを作成
+              - 'iam:DeleteRole'            #Roleを削除
+              - 'iam:AttachRolePolicy'      #Roleにポリシーを付与
+              - 'iam:DetachRolePolicy'      #Roleに付与されたポリシーを外す
+              - 'iam:PutRolePolicy'         #インラインポリシーを作成
+              - 'iam:DeleteRolePolicy'      #インラインポリシーを削除
+              - 'iam:PassRole'              #Roleをリソースに付与（Lambdaに付与する際に利用）
+              - 'lambda:GetFunction'        #Lambdaの情報を取得
+              - 'lambda:CreateFunction'     #Lambdaを作成
+              - 'lambda:UpdateFunctionCode' #Lambdaを更新
+              - 'lambda:DeleteFunction'     #Lambdaを削除
+              - 'lambda:AddPermission'      #Lambdaに対してPermissionを付与する
+              - 'lambda:RemovePermission'   #Lambdaに対してPermissionを削除する
+              - 'events:DescribeRule'       #Ruleの情報を取得
+              - 'events:PutRule'            #EventRuleを作成
+              - 'events:DeleteRule'         #EventRuleを削除
+              - 'events:PutTargets'         #EventRuleに対するターゲットの設定
+              - 'events:RemoveTargets'      #EventRuleに対するターゲットの削除
             Resource: '*'
+
 ```
 
 
@@ -518,25 +530,27 @@ CodePipelineは以下を実行する
 ただし、公式ドキュメントのPassRoleの権限が強いので、以下のように、受け取るのをCFNに限定する方が良い。
 
 ```yaml
-# https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/security-iam.html#how-to-custom-role
-CodePipelineCFnPolicy:
-  Type: "AWS::IAM::ManagedPolicy"
-  Properties:
-    ManagedPolicyName: !Sub "policy-${EnvID}-codepipeline-cfn"
-    Description: ""
-    Path: "/"
-    PolicyDocument:
-      Version: "2012-10-17"
-      Statement:
-        - #ArtifactのためのS3に対する権限
-          Effect: Allow
-          Action:
-            - s3:PutObject
-            - s3:GetObject
-            - s3:GetObjectVersion
-            - s3:GetBucketAcl
-            - s3:GetBucketLocation
-          Resource: !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact" #対象のバケットに絞る
+  # https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/security-iam.html#how-to-custom-role
+  CodePipelineCFnPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "policy-${EnvID}-codepipeline-cfn"
+      Description: ""
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - #ArtifactのためのS3に対する権限
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:GetBucketAcl
+              - s3:GetBucketLocation
+            Resource: 
+              - !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact" #対象のバケットに絞る
+              - !Sub "arn:aws:s3:::s3-${EnvID}-codepipeline-artifact/*" #対象のバケットに絞る
         - #CodeCommitに対する権限
           Effect: Allow
           Action:
@@ -588,6 +602,7 @@ CodePipelineCFnPolicy:
 ## Eventの作成
 ### Eventの作成
 EventBridgeを利用して、特定のイベントが発生したときに、指定されたターゲット（この場合はAWS CodePipeline）をトリガーする設定を行う。
+今回は、codecommitの特定のブランチにUpdate（Pushやマージ）があった場合に、Pipelineを起動するように設定する。
 
 ```yaml
   EventsRule:
@@ -659,10 +674,8 @@ EventBridgeを利用して、特定のイベントが発生したときに、指
             Action:
               - codepipeline:StartPipelineExecution
             Resource:
-              - "*"
+              - !Sub arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:codepipeline-${EnvID}-cfn-${ProjectID} #対象のPipelineに絞る
       Description: "Policy for eventbridge codepipeline exec"
-
-
 ```
 
 
@@ -701,6 +714,7 @@ codecommit用の認証情報払い出し方法は以下でPasswordは自分で�
 また、IAMUserのスタックを削除する際に、払い出した情報が残っていると削除に失敗するので、削除する場合は、先に消しておく。
 ```sh
 aws iam create-service-specific-credential --user-name <User_Name> --service-name codecommit.amazonaws.com
+aws iam create-service-specific-credential --user-name user-dev-codecommit-mirroring --service-name codecommit.amazonaws.com
 {
     "ServiceSpecificCredential": {
 ……
@@ -713,3 +727,51 @@ aws iam create-service-specific-credential --user-name <User_Name> --service-nam
 ```
 
 ![](../img/demo-codecommit-auth.png)
+
+
+## ミラーリング設定
+### gitlabのリポジトリ作成
+lambdaとEventBridgeを作成するので、lambda-eventと言うリポジトリを作成する。
+このリポジトリに、lambdaとEventBridgeを作成するテンプレートファイルを格納していく。
+
+![](../img/demo-make-gitlab.png)
+
+
+### ローカルでの開発準備
+ローカルで開発をしていくために作成したPJをローカルにCloneする。
+監視するBranchを作成してremoteにpushしておく。例えば、developmentBranchを監視させる場合は、developmentBranchを切って、Pushしておく。
+
+
+### ミラーリング設定
+codecommitでHTTPSのURLを取得し、CodeCommitのミラーリング用のIAMユーザーで作成した`ServiceUserName@`をhtts://の後ろに挿入
+```
+# 取得したHTTPSのgitURL
+https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/codecommit-dev-cfn-ProjectX
+
+# 挿入後
+https://user-dev-codecommit-mirroring-at-XXXXXXXXXXXX@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/codecommit-dev-cfn-ProjectX
+```
+
+gitlab側で、設定からミラーリポジトリを開いて、各種情報を設定してミラーリングを行う。
+![](../img/demo-mirroring.png)
+
+- URL：上記で作成した挿入後のURL
+- ユーザー名：ServiceUserName
+- パスワード：ServicePassword
+
+ミラーリング設定を行なったら、gitlabでミラーリングの更新ボタンを押下すると、codecommit側にgitlabの中身が確認できる。
+
+
+
+## ログ設計
+### Buildのログ
+デフォルト設定をしているので、自動でロググループが作成される。
+
+![](../img/demo-log-codebuild.png)
+
+### Codedeployのログ
+実行した際のエラーなどはCFNのイベントに出力される
+
+![](../img/demo-log-codedeploy.png)
+
+
