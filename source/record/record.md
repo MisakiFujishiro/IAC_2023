@@ -49,14 +49,14 @@ IaCの導入・運用に関する課題と対策を
 - codecommit【完了】
 - codebuild【完了】
 - codedeploy【完了】
-- codepipeline
-- Event
-- S3
+- codepipeline【完了】
+- Event【完了】
+- S3【完了】
 - IAM
-    - Mirroring User
-    - codebuild Role
-    - CodeDeploy Role
-    - CodePipeline Role
+    - Mirroring User【完了】
+    - codebuild Role【完了】
+    - CodeDeploy Role【完了】
+    - CodePipeline Role【完了】
 - スタック
     - Lambda-A
     - Lambda-B
@@ -64,7 +64,9 @@ IaCの導入・運用に関する課題と対策を
     - Event-B
     - Role
 
-
+- 応用編
+    - gitlabのミラーリングを利用しないでgitと連携
+    - ログの設計
 
 ## 1月
 ### スターターセット作成完成

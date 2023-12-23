@@ -48,6 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html">参考サイト</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
@@ -55,30 +56,30 @@
 <p class="caption" role="heading"><span class="caption-text">デモ:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="codepipeline.html">Cloudformation用のcodepipelineを作成する</a></li>
-<li class="toctree-l1"><a class="reference internal" href="codepipeline.html#id15">テンプレートファイル一覧</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LambdaとEvent作成フロー</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">開発環境準備</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#gitlab">gitlabのリポジトリ作成</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">ローカルでの開発準備</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">ミラーリング設定</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id3">スタックの作成</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#id4">スタックの作成</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#role">Roleの作成</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">Roleのスタック作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Roleのスタック作成</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#codedeployrole">codedeployのRole修正</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#codepipelinerole">codepipelineのRole確認</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#event">Eventの作成</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Eventのスタック作成</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">codedeployのRole確認</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Eventのスタック作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">codedeployのRole確認</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#lambda">Lambdaの作成</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Lambdaのスタック作成</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">codedeployのRole確認</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Lambdaのスタック作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">codedeployのRole確認</a></li>
 </ul>
 </li>
 </ul>
@@ -123,14 +124,33 @@
 <h3>ローカルでの開発準備<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
 <p>ローカルで開発をしていくために作成したPJをローカルにCloneする。</p>
 </section>
-</section>
-</section>
 <section id="id3">
-<h1>スタックの作成<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h1>
+<h3>ミラーリング設定<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<p>codecommitでHTTPSのURLを取得し、CodeCommitのミラーリング用のIAMユーザーで作成した<code class="docutils literal notranslate"><span class="pre">ServiceUserName&#64;</span></code>をhtts://の後ろに挿入</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 取得したHTTPSのgitURL</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">-</span><span class="n">codecommit</span><span class="o">.</span><span class="n">ap</span><span class="o">-</span><span class="n">northeast</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span><span class="n">codecommit</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">cfn</span><span class="o">-</span><span class="n">ProjectX</span>
+
+<span class="c1"># 挿入後</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">codecommit</span><span class="o">-</span><span class="n">mirroring</span><span class="o">-</span><span class="n">at</span><span class="o">-</span><span class="n">XXXXXXXXXXXX</span><span class="nd">@git</span><span class="o">-</span><span class="n">codecommit</span><span class="o">.</span><span class="n">ap</span><span class="o">-</span><span class="n">northeast</span><span class="o">-</span><span class="mf">1.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">repos</span><span class="o">/</span><span class="n">codecommit</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">cfn</span><span class="o">-</span><span class="n">ProjectX</span>
+</pre></div>
+</div>
+<p>gitlab側で、設定からミラーリポジトリを開いて、各種情報を設定してミラーリングを行う。
+<img alt="" src="../_images/demo-mirroring.png" /></p>
+<ul class="simple">
+<li><p>URL：上記で作成した挿入後のURL</p></li>
+<li><p>ユーザー名：ServiceUserName</p></li>
+<li><p>パスワード：ServicePassword</p></li>
+</ul>
+<p>ミラーリング設定を行なったら、gitlabでミラーリングの更新ボタンを押下すると、codecommit側にgitlabの中身が確認できる。</p>
+</section>
+</section>
+</section>
+<section id="id4">
+<h1>スタックの作成<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h1>
 <section id="role">
 <h2>Roleの作成<a class="headerlink" href="#role" title="Permalink to this heading">¶</a></h2>
-<section id="id4">
-<h3>Roleのスタック作成<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<section id="id5">
+<h3>Roleのスタック作成<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
 </section>
 <section id="codedeployrole">
 <h3>codedeployのRole修正<a class="headerlink" href="#codedeployrole" title="Permalink to this heading">¶</a></h3>
@@ -141,20 +161,20 @@
 </section>
 <section id="event">
 <h2>Eventの作成<a class="headerlink" href="#event" title="Permalink to this heading">¶</a></h2>
-<section id="id5">
-<h3>Eventのスタック作成<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
-</section>
 <section id="id6">
-<h3>codedeployのRole確認<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3>Eventのスタック作成<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+</section>
+<section id="id7">
+<h3>codedeployのRole確認<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 </section>
 </section>
 <section id="lambda">
 <h2>Lambdaの作成<a class="headerlink" href="#lambda" title="Permalink to this heading">¶</a></h2>
-<section id="id7">
-<h3>Lambdaのスタック作成<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
-</section>
 <section id="id8">
-<h3>codedeployのRole確認<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3>Lambdaのスタック作成<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+</section>
+<section id="id9">
+<h3>codedeployのRole確認<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
 </section>
 </section>
 </section>

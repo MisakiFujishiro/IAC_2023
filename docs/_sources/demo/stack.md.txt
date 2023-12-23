@@ -10,6 +10,28 @@ lambdaとEventBridgeを作成するので、lambda-eventと言うリポジトリ
 ローカルで開発をしていくために作成したPJをローカルにCloneする。
 
 
+### ミラーリング設定
+codecommitでHTTPSのURLを取得し、CodeCommitのミラーリング用のIAMユーザーで作成した`ServiceUserName@`をhtts://の後ろに挿入
+```
+# 取得したHTTPSのgitURL
+https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/codecommit-dev-cfn-ProjectX
+
+# 挿入後
+https://user-dev-codecommit-mirroring-at-XXXXXXXXXXXX@git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/codecommit-dev-cfn-ProjectX
+```
+
+gitlab側で、設定からミラーリポジトリを開いて、各種情報を設定してミラーリングを行う。
+![](../img/demo-mirroring.png)
+- URL：上記で作成した挿入後のURL
+- ユーザー名：ServiceUserName
+- パスワード：ServicePassword
+
+ミラーリング設定を行なったら、gitlabでミラーリングの更新ボタンを押下すると、codecommit側にgitlabの中身が確認できる。
+
+
+
+
+
 
 
 # スタックの作成
