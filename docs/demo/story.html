@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LambdaとEvent作成フロー &mdash; iac_2023 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Cloudformation用のcodepipelineを作成する" href="codepipeline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> iac_2023
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../record/record.html">活動記録</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/story.html">ストーリー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/book.html">情報収集</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html">参考サイト</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">デモ:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="codepipeline.html">Cloudformation用のcodepipelineを作成する</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LambdaとEvent作成フロー</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">全体感</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cfn">CFNのテンプレートファイル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter">parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#buildspec-yaml">buildspec.yaml</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lambda">Lambdaの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Lambdaのスタック作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-json">parameter.json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">buildspec.yaml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#codedeploy">codedeploy確認</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">codedeployの設定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#event">Eventの作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Eventのスタック作成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">トラブルシューティング</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#developmentpipeline">developmentブランチにマージしたが、Pipelineが実行されない。</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build">Buildでエラー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">CFNの実行時にエラー</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">iac_2023</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">LambdaとEvent作成フロー</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/demo/story.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lambdaevent">
+<h1>LambdaとEvent作成フロー<a class="headerlink" href="#lambdaevent" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>全体感<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>CodePipelineで実行されるCFNの設定を確認する。こちらに合わせて、ソースコードの準備を行う。</p>
+<ul class="simple">
+<li><p>StackName：作成されるスタック名</p></li>
+<li><p>TemplateConfiguration: 実行されるCFNのテンプレートファイルに渡すparameterの値</p></li>
+<li><p>TemplatePath：実行されるCFNのテンプレートファイル名</p></li>
+</ul>
+<p><img alt="" src="../_images/demo-deploy-settings.png" /></p>
+<section id="cfn">
+<h3>CFNのテンプレートファイル<a class="headerlink" href="#cfn" title="Permalink to this heading">¶</a></h3>
+<p>TemplatePathが<code class="docutils literal notranslate"><span class="pre">root-stack-ProjectX</span></code>なので、この名前でテンプレートファイルを作成する。
+今回は、Lambda/EventBridge/IAMを作成する。</p>
+</section>
+<section id="parameter">
+<h3>parameter<a class="headerlink" href="#parameter" title="Permalink to this heading">¶</a></h3>
+<p>TemplateConfigurationが<code class="docutils literal notranslate"><span class="pre">parameter.json</span></code>なので、この名前でparameterファイルを設定する。</p>
+<p>json形式で、root-stackに渡すパラメータを定義する。
+環境によって変化する値、例えば環境名(dev/prd)などがある場合はbuildのタイミングで渡すことによって、parameter.jsonを増やさなくて済む。
+parameter.jsonに対して、buildのタイミングで操作する場合、その操作内容をbuildspec.yamlで定義しておく。</p>
+</section>
+<section id="buildspec-yaml">
+<h3>buildspec.yaml<a class="headerlink" href="#buildspec-yaml" title="Permalink to this heading">¶</a></h3>
+<p>ビルドステージで、実行されるコマンドを定義する。</p>
+<ul class="simple">
+<li><p>parameterに環境を埋め込む操作</p></li>
+<li><p>デプロイステージへtemplateファイルとparameterファイルをArtifactとして渡す</p></li>
+</ul>
+</section>
+</section>
+<section id="lambda">
+<h2>Lambdaの作成<a class="headerlink" href="#lambda" title="Permalink to this heading">¶</a></h2>
+<p>まずは、単純にHello Worldを発行するだけのLambdaを作成する。</p>
+<section id="id2">
+<h3>Lambdaのスタック作成<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>root-stack-ProjectXに対してLambdaとLambdaで利用するRoleを設定する。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">AWSTemplateFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2010-09-09&#39;</span>
+<span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AWS</span><span class="nv"> </span><span class="s">CloudFormation</span><span class="nv"> </span><span class="s">Sample</span><span class="nv"> </span><span class="s">Template:</span><span class="nv"> </span><span class="s">Lambda</span><span class="nv"> </span><span class="s">function</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">IAM</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">Hello</span><span class="nv"> </span><span class="s">World</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">Python.&#39;</span>
+
+<span class="nt">Parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">EnvID</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="w">    </span><span class="nt">AllowedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">dev</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">stg</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">prd</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
+
+<span class="nt">Resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">HelloLambdaFunction</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Lambda::Function</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">FunctionName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;lambda-${EnvID}-hello&quot;</span>
+<span class="w">      </span><span class="nt">Handler</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index.handler</span>
+<span class="w">      </span><span class="nt">Role</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LambdaExecutionRole.Arn</span>
+<span class="w">      </span><span class="nt">Code</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">ZipFile</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">def handler(event, context):</span>
+<span class="w">              </span><span class="no">print(&quot;Hello World!&quot;)</span>
+<span class="w">              </span><span class="no">return &quot;Hello World&quot;</span>
+<span class="w">      </span><span class="nt">Runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python3.8</span>
+
+<span class="w">  </span><span class="nt">LambdaExecutionRole</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::IAM::Role</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">AssumeRolePolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2012-10-17&#39;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">          </span><span class="nt">Principal</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">Service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda.amazonaws.com</span>
+<span class="w">          </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;sts:AssumeRole&#39;</span>
+<span class="w">      </span><span class="nt">Policies</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">PolicyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">        </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2012-10-17&#39;</span>
+<span class="w">          </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogGroup</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogStream</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:PutLogEvents</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">      </span><span class="nt">Tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">Key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CreatedBy</span>
+<span class="w">          </span><span class="nt">Value</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="s">&quot;AWS::StackName&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-json">
+<h3>parameter.json<a class="headerlink" href="#parameter-json" title="Permalink to this heading">¶</a></h3>
+<p>rootstackには、パラメータとして、EnvIDを渡す必要があるので、parameter.jsonを以下のように設定する。
+EnvIDの部分は、buildspec.yamlで与える。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;Parameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;EnvID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EnvID_FROM_BUILD&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>buildspec.yaml<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>parameter.jsonに環境名を渡す設定を行う</p>
+<ul>
+<li><p>$EnvIDはcodebuildを作成する時点で<code class="docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code>として設定しているのでこれを渡す</p></li>
+</ul>
+</li>
+<li><p>Artifactの設定</p>
+<ul>
+<li><p>artifactセクションを設定することで、ここで設定した値がbuildのArtifactとして出力される</p></li>
+<li><p>pipelineで設定している<code class="docutils literal notranslate"><span class="pre">OutputArtifacts</span></code>の<code class="docutils literal notranslate"><span class="pre">BuildArtifact</span></code>に設定される</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.2</span>
+
+<span class="nt">phases</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pre_build</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sed -i &#39;s/EnvID_FROM_BUILD/&#39;&quot;$EnvID&quot;&#39;/g&#39; parameter.json</span>
+<span class="nt">artifacts</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">files</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root-stack-ProjectX.yaml</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">parameter.json</span>
+</pre></div>
+</div>
+</section>
+<section id="codedeploy">
+<h3>codedeploy確認<a class="headerlink" href="#codedeploy" title="Permalink to this heading">¶</a></h3>
+<section id="id4">
+<h4>codedeployの設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h4>
+<p>今回はIAMのRoleを作成するので、<code class="docutils literal notranslate"><span class="pre">Capabilities</span></code>が<code class="docutils literal notranslate"><span class="pre">CAPABILITY_NAMED_IAM</span></code>になっている必要がある</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="nt">Configuration</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">ActionMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CREATE_UPDATE&quot;</span>
+<span class="w">    </span><span class="nt">Capabilities</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CAPABILITY_NAMED_IAM&quot;</span><span class="w"> </span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="event">
+<h2>Eventの作成<a class="headerlink" href="#event" title="Permalink to this heading">¶</a></h2>
+<section id="id5">
+<h3>Eventのスタック作成<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<p>5分ごとにLambdaを呼び出すEventを作成する。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">EventBridgeRule</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Events::Rule</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">EventBusName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;eventbridge-${EnvID}-awake&quot;</span>
+<span class="w">      </span><span class="nt">ScheduleExpression</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cron(*/5 * * * ? *)</span>
+<span class="w">      </span><span class="nt">State</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENABLED</span>
+<span class="w">      </span><span class="nt">Targets</span><span class="p">:</span><span class="w"> </span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Arn</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HelloLambdaFunction.Arn</span>
+<span class="w">          </span><span class="nt">Id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HelloLambdaFunction</span>
+</pre></div>
+</div>
+<p>Lambdaを実行するためには、リソースベースのようにLambda側でPermissionを付与してEventの呼び出しを許可する必要がある。
+Event側にLambda Invokeの権限を付与するのは一般的ではないらしい。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="c1"># Lambdaに付与するPermission</span>
+<span class="w">  </span><span class="c1"># Lambdaを呼び出すprincipalを設定することで呼び出しを許可する</span>
+<span class="w">  </span><span class="nt">PermissionForEventsToInvokeLambda</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS::Lambda::Permission</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">FunctionName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Ref</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HelloLambdaFunction</span>
+<span class="w">      </span><span class="nt">Action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda:InvokeFunction</span>
+<span class="w">      </span><span class="nt">Principal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">events.amazonaws.com</span>
+<span class="w">      </span><span class="nt">SourceArn</span><span class="p">:</span><span class="w"> </span><span class="kt">!GetAtt</span><span class="w"> </span><span class="s">&#39;EventBridgeRule.Arn&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>トラブルシューティング<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
+<section id="developmentpipeline">
+<h3>developmentブランチにマージしたが、Pipelineが実行されない。<a class="headerlink" href="#developmentpipeline" title="Permalink to this heading">¶</a></h3>
+<p>Eventがうまく動作していない可能性が高いので、確認したいが、EventやPiplieneのページからは実行の履歴を確認できなかった。
+CloudTrailを確認すると<code class="docutils literal notranslate"><span class="pre">StartPipelineExecution	codepipeline.amazonaws.com</span></code>を発見。中身は以下。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;eventSource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;codepipeline.amazonaws.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;eventName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StartPipelineExecution&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;awsRegion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ap-northeast-1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sourceIPAddress&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;events.amazonaws.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;userAgent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;events.amazonaws.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;errorCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AccessDenied&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;errorMessage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;User: arn:aws:sts::XXXXXXXXXXX:assumed-role/role-dev-eventbridge-codepipeline-exec/057ffa15c4983c099eb1f9f09f268001 is not authorized to perform: codepipeline:StartPipelineExecution on resource: arn:aws:codepipeline:ap-northeast-1:XXXXXXXXXXX:codepipeline-dev-cfn-ProjectX because no identity-based policy allows the codepipeline:StartPipelineExecution action&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>対象のPipelineについて、StartPipelineExecutionの権限がないらしい。</p>
+<p>改めて、EventBridgeのPolicyをチェック</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">EventsCodepipelineExecPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-eventbridge-codepipeline-exec&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codepipeline:StartPipelineExecution</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/event-rule-${EnvID}-codepipeline-exec-cfn-${ProjectID}&quot;</span><span class="w"> </span><span class="c1">#対象のEventに絞る</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Policy</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">eventbridge</span><span class="nv"> </span><span class="s">codepipeline</span><span class="nv"> </span><span class="s">exec&quot;</span>
+</pre></div>
+</div>
+<p>Resourceがイベントになっていた。StartPipelineExecutionするので、ここのResourceはPipelineであるべき。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">            </span><span class="nt">Resource</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:codepipeline-${EnvID}-cfn-${ProjectID}</span><span class="w"> </span><span class="c1">#対象のPipelineに絞る</span>
+</pre></div>
+</div>
+</section>
+<section id="build">
+<h3>Buildでエラー<a class="headerlink" href="#build" title="Permalink to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">error</span> <span class="pre">while</span> <span class="pre">downloading</span> <span class="pre">key</span> <span class="pre">codepipeline-dev-cfn/SourceArti/M4CEgx3,</span> <span class="pre">error:</span> <span class="pre">AccessDenied:</span> <span class="pre">Access</span> <span class="pre">Denied</span></code>
+S3に作成されたArtifactにアクセスできてない様子</p>
+<p>codeBuildに付与されたPolicyをチェック</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeBuildCFnPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AWS::IAM::ManagedPolicy&quot;</span>
+<span class="w">    </span><span class="nt">Properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ManagedPolicyName</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;policy-${EnvID}-codebuild-cfn&quot;</span>
+<span class="w">      </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/&quot;</span>
+<span class="w">      </span><span class="nt">PolicyDocument</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2012-10-17&quot;</span>
+<span class="w">        </span><span class="nt">Statement</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogGroup</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:CreateLogStream</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs:PutLogEvents</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1">#本来はBuildの出力先であるloggroupに絞る</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span>
+<span class="w">            </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
+<span class="w">            </span><span class="nt">Action</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:ListBucket</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:PutObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObject</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetObjectVersion</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketAcl</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3:GetBucketLocation</span>
+<span class="w">            </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::s3-${EnvID}-codepipeline-artifact&quot;</span><span class="w"> </span><span class="c1">#Codepipelineで指定したArtifactの出力先であるS3に絞る</span>
+<span class="w">      </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</pre></div>
+</div>
+<p>S3のキーにアクセスするためには、<code class="docutils literal notranslate"><span class="pre">bucket/*</span></code>が必要なので追加</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::s3-${EnvID}-codepipeline-artifact&quot;</span><span class="w"> </span><span class="c1">#Codepipelineで指定したArtifactの出力先であるS3に絞る</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!Sub</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:::s3-${EnvID}-codepipeline-artifact/*&quot;</span><span class="w"> </span><span class="c1">#Codepipelineで指定したArtifactの出力先であるS3に絞る</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>CFNの実行時にエラー<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Unknown</span> <span class="pre">property</span> <span class="pre">[[EnvID]]</span> <span class="pre">in</span> <span class="pre">template</span> <span class="pre">configuration</span></code>
+TemplateConfigurationが間違っているっぽいので、確認する。S3にあるbuildArtiを確認すると以下</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;EnvID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dev&quot;</span><span class="w"> </span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-basic-walkthrough.html">公式ドキュメント</a>のサンプルをDLすると、Templateconfigは以下で設定する。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;Parameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;EnvID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dev&quot;</span><span class="w"> </span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="codepipeline.html" class="btn btn-neutral float-left" title="Cloudformation用のcodepipelineを作成する" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, misaki.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

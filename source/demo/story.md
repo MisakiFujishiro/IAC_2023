@@ -118,7 +118,7 @@ artifacts:
 ### codedeploy確認
 #### codedeployの設定
 今回はIAMのRoleを作成するので、`Capabilities`が`CAPABILITY_NAMED_IAM`になっている必要がある
-```json
+```yaml
  Configuration: 
     ActionMode: "CREATE_UPDATE"
     Capabilities: "CAPABILITY_NAMED_IAM" 

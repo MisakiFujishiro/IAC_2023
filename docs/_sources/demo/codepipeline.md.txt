@@ -680,7 +680,12 @@ EventBridgeを利用して、特定のイベントが発生したときに、指
 
 
 
-## ミラーリングユーザーの作成
+## ミラーリング設定（gitlab編
+gitlabにはミラーリング機能というものがあるため、こちらを利用する。
+
+イメージとしては、IAM Userを作成し、IAM Userで発行した認証情報をgitlab側に登録することで、gitlabはIAM Userに認証して、codeCommitにPushする。
+
+### ユーザー作成
 codecommitとgitlabをミラーリングさせるために認証設定が必要となる。
 具体的には、codecommitへのアクセス権限のみを持つIAMポリシーを作成し、このポリシーのみをもつIAMユーザーを作成します。
 ```yaml
@@ -729,7 +734,6 @@ aws iam create-service-specific-credential --user-name user-dev-codecommit-mirro
 ![](../img/demo-codecommit-auth.png)
 
 
-## ミラーリング設定
 ### gitlabのリポジトリ作成
 lambdaとEventBridgeを作成するので、lambda-eventと言うリポジトリを作成する。
 このリポジトリに、lambdaとEventBridgeを作成するテンプレートファイルを格納していく。
@@ -763,6 +767,93 @@ gitlab側で、設定からミラーリポジトリを開いて、各種情報�
 
 
 
+
+
+
+
+## ミラーリング設定（github編
+GitHubActionとsshを利用した、認証と暗号化をおこなって、ミラーリングを行う。
+
+イメージとしては、公開鍵はIAMユーザーに登録しておき、秘密鍵はgithubに登録。
+githubActionで登録した秘密鍵を利用して認証して、codeCommitに対してPushするイメージ。
+
+### ユーザー作成
+gitlab同様にcodecommitに対する権限を持ったユーザーを作成しておく。
+
+### SSHの準備
+#### キーの作成
+```sh
+ssh-keygen -t rsa -b 4096 -m PEM -C <githubのメールアドレス>
+```
+#### IAMUserへの登録
+`IAM>アクセス管理>ユーザー>AWS CodeCommitのSSHキーにパブリックキーをアップロード`から、SSHキーのアップロードを行う。
+![](../img/demo-github-mirroring.png)
+
+以下のコマンドで公開鍵をコピーする
+```sh
+pbcopy < ~/.ssh/id_rsa.pub
+```
+
+アップロード完了するとIDが発行される。このIDはgithub側で利用するのでメモしておく。
+![](../img/demo-github-codecommit-ID.png)
+
+
+
+#### githubへの登録
+`github>Setting>Secrets and variables>Actions>New repository secrets`で以下の情報を登録
+
+![](../img/demo-github-prikey.png)
+
+- 秘密鍵
+  - Name:CODECOMMIT_SSH_PRIVATE_KEY
+  - Value:プライベートキーの中身
+
+以下のコマンドで秘密鍵をコピーする
+```sh
+pbcopy < ~/.ssh/id_rsa
+```
+
+- SSHキーID
+  - Name：CODECOMMIT_SSH_PRIVATE_KEY_ID
+  - Value：SSHキーのID（awsのIAMのページで表示される)
+
+
+
+
+### github Actionの設定
+githubActionの設定を行う手順は2つ
+- 対象のリポジトリのフォルダのルートから`.github/workflows/main.yml`を作成する。
+- githubのWeb画面から`github>Actions>NewWorkFlow>set up a workflows`で設定することができる
+![](../img/demo-github-action.png)
+
+
+[YOUR_REPOSITORY_NAME]の部分を自分のリポジトリに書き換える。
+
+```sh
+name: Mirroring
+
+on: [ push, delete ]
+
+jobs:
+  to_codecommit:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ssh://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/[YOUR_REPOSITORY_NAME]
+          ssh_private_key:
+            ${{ secrets.CODECOMMIT_SSH_PRIVATE_KEY }}
+          ssh_username:
+            ${{ secrets.CODECOMMIT_SSH_PRIVATE_KEY_ID }}
+```
+
+![](../img/demo-github-action-code.png)
+
+上記の設定をした時点で、`.github/workflows/main.yml`がcodecommitにミラーリングされている
+
+
 ## ログ設計
 ### Buildのログ
 デフォルト設定をしているので、自動でロググループが作成される。
@@ -773,5 +864,6 @@ gitlab側で、設定からミラーリポジトリを開いて、各種情報�
 実行した際のエラーなどはCFNのイベントに出力される
 
 ![](../img/demo-log-codedeploy.png)
+
 
 

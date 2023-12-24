@@ -32,7 +32,7 @@
    :caption: デモ:
 
    demo/codepipeline.md
-   demo/stack.md
+   demo/story.md
    
 
 

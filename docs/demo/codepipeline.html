@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="LambdaとEvent作成フロー" href="stack.html" />
+    <link rel="next" title="LambdaとEvent作成フロー" href="story.html" />
     <link rel="prev" title="gitlabとJIRAの比較" href="../gitOps/dev_flow.html" /> 
 </head>
 
@@ -94,21 +94,32 @@
 <li class="toctree-l3"><a class="reference internal" href="#id12">codedepipeline用のIAMRole作成</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">ミラーリングユーザーの作成</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">ミラーリング設定</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#gitlab">gitlabのリポジトリ作成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gitlab">ミラーリング設定（gitlab編</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id13">ユーザー作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">gitlabのリポジトリ作成</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id15">ローカルでの開発準備</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id16">ミラーリング設定</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id17">ログ設計</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#github">ミラーリング設定（github編</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id17">ユーザー作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssh">SSHの準備</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id18">キーの作成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iamuser">IAMUserへの登録</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">githubへの登録</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#github-action">github Actionの設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">ログ設計</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#build">Buildのログ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#codedeploy">Codedeployのログ</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stack.html">LambdaとEvent作成フロー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="story.html">LambdaとEvent作成フロー</a></li>
 </ul>
 
         </div>
@@ -871,8 +882,12 @@ Capabilitiesは、CFNがリソースを制御すると言う強力な力を持�
 </div>
 </section>
 </section>
+<section id="gitlab">
+<h2>ミラーリング設定（gitlab編<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h2>
+<p>gitlabにはミラーリング機能というものがあるため、こちらを利用する。</p>
+<p>イメージとしては、IAM Userを作成し、IAM Userで発行した認証情報をgitlab側に登録することで、gitlabはIAM Userに認証して、codeCommitにPushする。</p>
 <section id="id13">
-<h2>ミラーリングユーザーの作成<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h2>
+<h3>ユーザー作成<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
 <p>codecommitとgitlabをミラーリングさせるために認証設定が必要となる。
 具体的には、codecommitへのアクセス権限のみを持つIAMポリシーを作成し、このポリシーのみをもつIAMユーザーを作成します。</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">CodeCommitUser</span><span class="p">:</span>
@@ -919,9 +934,7 @@ aws<span class="w"> </span>iam<span class="w"> </span>create-service-specific-cr
 <p><img alt="" src="../_images/demo-codecommit-auth.png" /></p>
 </section>
 <section id="id14">
-<h2>ミラーリング設定<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h2>
-<section id="gitlab">
-<h3>gitlabのリポジトリ作成<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h3>
+<h3>gitlabのリポジトリ作成<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
 <p>lambdaとEventBridgeを作成するので、lambda-eventと言うリポジトリを作成する。
 このリポジトリに、lambdaとEventBridgeを作成するテンプレートファイルを格納していく。</p>
 <p><img alt="" src="../_images/demo-make-gitlab.png" /></p>
@@ -951,8 +964,94 @@ aws<span class="w"> </span>iam<span class="w"> </span>create-service-specific-cr
 <p>ミラーリング設定を行なったら、gitlabでミラーリングの更新ボタンを押下すると、codecommit側にgitlabの中身が確認できる。</p>
 </section>
 </section>
+<section id="github">
+<h2>ミラーリング設定（github編<a class="headerlink" href="#github" title="Permalink to this heading">¶</a></h2>
+<p>GitHubActionとsshを利用した、認証と暗号化をおこなって、ミラーリングを行う。</p>
+<p>イメージとしては、公開鍵はIAMユーザーに登録しておき、秘密鍵はgithubに登録。
+githubActionで登録した秘密鍵を利用して認証して、codeCommitに対してPushするイメージ。</p>
 <section id="id17">
-<h2>ログ設計<a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h2>
+<h3>ユーザー作成<a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h3>
+<p>gitlab同様にcodecommitに対する権限を持ったユーザーを作成しておく。</p>
+</section>
+<section id="ssh">
+<h3>SSHの準備<a class="headerlink" href="#ssh" title="Permalink to this heading">¶</a></h3>
+<section id="id18">
+<h4>キーの作成<a class="headerlink" href="#id18" title="Permalink to this heading">¶</a></h4>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>rsa<span class="w"> </span>-b<span class="w"> </span><span class="m">4096</span><span class="w"> </span>-m<span class="w"> </span>PEM<span class="w"> </span>-C<span class="w"> </span>&lt;githubのメールアドレス&gt;
+</pre></div>
+</div>
+</section>
+<section id="iamuser">
+<h4>IAMUserへの登録<a class="headerlink" href="#iamuser" title="Permalink to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">IAM&gt;アクセス管理&gt;ユーザー&gt;AWS</span> <span class="pre">CodeCommitのSSHキーにパブリックキーをアップロード</span></code>から、SSHキーのアップロードを行う。
+<img alt="" src="../_images/demo-github-mirroring.png" /></p>
+<p>以下のコマンドで公開鍵をコピーする</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pbcopy<span class="w"> </span>&lt;<span class="w"> </span>~/.ssh/id_rsa.pub
+</pre></div>
+</div>
+<p>アップロード完了するとIDが発行される。このIDはgithub側で利用するのでメモしておく。
+<img alt="" src="../_images/demo-github-codecommit-ID.png" /></p>
+</section>
+<section id="id19">
+<h4>githubへの登録<a class="headerlink" href="#id19" title="Permalink to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">github&gt;Setting&gt;Secrets</span> <span class="pre">and</span> <span class="pre">variables&gt;Actions&gt;New</span> <span class="pre">repository</span> <span class="pre">secrets</span></code>で以下の情報を登録</p>
+<p><img alt="" src="../_images/demo-github-prikey.png" /></p>
+<ul class="simple">
+<li><p>秘密鍵</p>
+<ul>
+<li><p>Name:CODECOMMIT_SSH_PRIVATE_KEY</p></li>
+<li><p>Value:プライベートキーの中身</p></li>
+</ul>
+</li>
+</ul>
+<p>以下のコマンドで秘密鍵をコピーする</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pbcopy<span class="w"> </span>&lt;<span class="w"> </span>~/.ssh/id_rsa
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>SSHキーID</p>
+<ul>
+<li><p>Name：CODECOMMIT_SSH_PRIVATE_KEY_ID</p></li>
+<li><p>Value：SSHキーのID（awsのIAMのページで表示される)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="github-action">
+<h3>github Actionの設定<a class="headerlink" href="#github-action" title="Permalink to this heading">¶</a></h3>
+<p>githubActionの設定を行う手順は2つ</p>
+<ul class="simple">
+<li><p>対象のリポジトリのフォルダのルートから<code class="docutils literal notranslate"><span class="pre">.github/workflows/main.yml</span></code>を作成する。</p></li>
+<li><p>githubのWeb画面から<code class="docutils literal notranslate"><span class="pre">github&gt;Actions&gt;NewWorkFlow&gt;set</span> <span class="pre">up</span> <span class="pre">a</span> <span class="pre">workflows</span></code>で設定することができる
+<img alt="" src="../_images/demo-github-action.png" /></p></li>
+</ul>
+<p>[YOUR_REPOSITORY_NAME]の部分を自分のリポジトリに書き換える。</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>name:<span class="w"> </span>Mirroring
+
+on:<span class="w"> </span><span class="o">[</span><span class="w"> </span>push,<span class="w"> </span>delete<span class="w"> </span><span class="o">]</span>
+
+jobs:
+<span class="w">  </span>to_codecommit:
+<span class="w">    </span>runs-on:<span class="w"> </span>ubuntu-20.04
+<span class="w">    </span>steps:
+<span class="w">      </span>-<span class="w"> </span>uses:<span class="w"> </span>actions/checkout@v1
+<span class="w">      </span>-<span class="w"> </span>uses:<span class="w"> </span>pixta-dev/repository-mirroring-action@v1
+<span class="w">        </span>with:
+<span class="w">          </span>target_repo_url:
+<span class="w">            </span>ssh://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/<span class="o">[</span>YOUR_REPOSITORY_NAME<span class="o">]</span>
+<span class="w">          </span>ssh_private_key:
+<span class="w">            </span><span class="si">${</span><span class="p">{ secrets.CODECOMMIT_SSH_PRIVATE_KEY </span><span class="si">}</span><span class="o">}</span>
+<span class="w">          </span>ssh_username:
+<span class="w">            </span><span class="si">${</span><span class="p">{ secrets.CODECOMMIT_SSH_PRIVATE_KEY_ID </span><span class="si">}</span><span class="o">}</span>
+</pre></div>
+</div>
+<p><img alt="" src="../_images/demo-github-action-code.png" /></p>
+<p>上記の設定をした時点で、<code class="docutils literal notranslate"><span class="pre">.github/workflows/main.yml</span></code>がcodecommitにミラーリングされている</p>
+</section>
+</section>
+<section id="id20">
+<h2>ログ設計<a class="headerlink" href="#id20" title="Permalink to this heading">¶</a></h2>
 <section id="build">
 <h3>Buildのログ<a class="headerlink" href="#build" title="Permalink to this heading">¶</a></h3>
 <p>デフォルト設定をしているので、自動でロググループが作成される。</p>
@@ -971,7 +1070,7 @@ aws<span class="w"> </span>iam<span class="w"> </span>create-service-specific-cr
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../gitOps/dev_flow.html" class="btn btn-neutral float-left" title="gitlabとJIRAの比較" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="stack.html" class="btn btn-neutral float-right" title="LambdaとEvent作成フロー" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="story.html" class="btn btn-neutral float-right" title="LambdaとEvent作成フロー" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
