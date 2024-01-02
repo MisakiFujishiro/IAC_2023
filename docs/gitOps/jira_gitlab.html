@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>参考サイト &mdash; iac_2023 1.0.0 documentation</title>
+  <title>gitlabとjiraの連携 &mdash; iac_2023 1.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -42,14 +42,37 @@
               <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../record/record.html">活動記録</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../record/story.html">ストーリー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/story.html">テーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record/story.html#id2">ストーリー</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../record/book.html">情報収集</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">gitOps:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gitlab.html">gitによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jira.html">jiraによるタスク管理</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">参考サイト</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">gitlabとjiraの連携</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">連携単位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">設定手順</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">マーケットプレイスのインストール</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jira">jira側の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gitlab">gitlab側の設定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">統合の設定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">連携機能</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jirabranch">JIRAからBranchを作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">ブランチの管理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">コミット管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mr">MR管理</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jiraissue">JIRAからIssue作成（プレミアム）</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">おすすめの利用方法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#id9">参考サイト</a></li>
 <li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_flow.html">gitlabとJIRAの比較</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_flow.html#id5">開発フロー案</a></li>
@@ -57,9 +80,7 @@
 <p class="caption" role="heading"><span class="caption-text">デモ:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../demo/codepipeline.html">Cloudformation用のcodepipelineを作成する</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/codepipeline.html#id15">テンプレートファイル一覧</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/stack.html">LambdaとEvent作成フロー</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/stack.html#id3">スタックの作成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/story.html">LambdaとEvent作成フロー</a></li>
 </ul>
 
         </div>
@@ -76,7 +97,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">参考サイト</li>
+      <li class="breadcrumb-item active">gitlabとjiraの連携</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/gitOps/jira_gitlab.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,8 +107,120 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="id1">
-<h1>参考サイト<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+  <section id="gitlabjira">
+<h1>gitlabとjiraの連携<a class="headerlink" href="#gitlabjira" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>連携単位<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>連携はJIRAのアカウント単位と、GitLabのグループ単位で連携を行うことができる。
+GitLabのグループは設定から追加ができる。</p>
+</section>
+<section id="id2">
+<h2>設定手順<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<p>SaaSのgitlabとjiraを利用しているのか、Server上のものを利用しているのかで、利用するプラグインが異なる。<br />
+今回はGitlab.com for Jira Cloudを利用して設定手順を整理する。</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-left head"><p>プラグインの名称</p></th>
+<th class="text-left head"><p>対象製品</p></th>
+<th class="text-left head"><p>手順</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><a class="reference external" href="https://marketplace.atlassian.com/apps/1221011/gitlab-com-for-jira-cloud?hosting=cloud&amp;amp;tab=overview">GitLab.com for Jira Cloud</a></p></td>
+<td class="text-left"><p>GitLab Saas と Jira Cloud版の連携に使用する</p></td>
+<td class="text-left"><p><a class="reference external" href="https://support.atlassian.com/ja/jira-cloud-administration/docs/integrate-gitlab-with-jira/">手順書</a></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><a class="reference external" href="https://marketplace.atlassian.com/apps/1224039/gitlab-connector-for-jira-software?tab=overview&amp;amp;hosting=datacenter">GitLab Connector for Jira Software</a></p></td>
+<td class="text-left"><p>GitLab Self-Managed と Jira DataCenter版・Server版 の連携に使用する</p></td>
+<td class="text-left"><p><a class="reference external" href="https://aslead.nri.co.jp/products/gitlab/column/introduction-of-gitlab-connector-for-jira-software.html">手順書</a></p></td>
+</tr>
+</tbody>
+</table>
+<p>基本的には、公式の
+<a class="reference external" href="https://support.atlassian.com/ja/jira-cloud-administration/docs/integrate-gitlab-with-jira/">手順書</a>
+に従って、設定を行う。</p>
+<section id="id3">
+<h3>マーケットプレイスのインストール<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<p>Atlassian Marketplace に進んで GitLab.com for Jira Cloud アプリをインストール</p>
+<p><img alt="" src="../_images/jira_gitlab_setting_1.png" /></p>
+</section>
+<section id="jira">
+<h3>jira側の設定<a class="headerlink" href="#jira" title="Permalink to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Jira の [アプリを管理] ページで、GitLab for Jira アプリの詳細を展開して [開始] を選択</p></li>
+</ol>
+<p><img alt="" src="../_images/jira_gitlab_setting_2.png" /></p>
+<ol class="arabic simple" start="2">
+<li><p>Sign in to gitlabを選択してgitlabを認証</p></li>
+<li><p>Linkの画面で連携するgitlabでPJを選択</p></li>
+</ol>
+<p><img alt="" src="../_images/jira_gitlab_setting_3.png" /></p>
+</section>
+<section id="gitlab">
+<h3>gitlab側の設定<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>プロジェクトに移動して [設定] &gt; [統合] の順に選択します。</p></li>
+<li><p>[統合を追加] で [Jira] を選択します。</p></li>
+</ol>
+<p><img alt="" src="../_images/jira_gitlab_setting_4.png" /></p>
+<ol class="arabic simple" start="3">
+<li><p>Jira サイトの詳細を次のように入力します。</p>
+<ul class="simple">
+<li><p>Web URL - Jira サイトの URL (例: https://myjirasite.atlassian.net)</p></li>
+<li><p>ユーザー名またはメール アドレス - Jira プロファイルに登録されているユーザー名またはメール アドレス。</p></li>
+<li><p>パスワードまたは API トークン - API トークンを作成してクリップボードにコピー &amp; ペーストします。</p></li>
+</ul>
+</li>
+<li><p>[変更を保存] を選択</p></li>
+</ol>
+</section>
+<section id="id4">
+<h3>統合の設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<p>★★★★★要確認★★★★★
+<img alt="" src="../_images/jira_gitlab_setting_5.png" /></p>
+</section>
+</section>
+<section id="id5">
+<h2>連携機能<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
+<section id="jirabranch">
+<h3>JIRAからBranchを作成<a class="headerlink" href="#jirabranch" title="Permalink to this heading">¶</a></h3>
+<p>連携が完了すると、jiraの課題やIssueからBranchを作成することが可能になる。</p>
+<p><img alt="" src="../_images/jira_gitlab_branch_1.png" /></p>
+<p>ブランチを作成を押下すると、gitlabのページに移動して、ブランチを作成するProjectとブランチ名を指定する。</p>
+<p><img alt="" src="../_images/jira_gitlab_branch_2.png" /></p>
+</section>
+<section id="id6">
+<h3>ブランチの管理<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<section id="id7">
+<h4>コミット管理<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h4>
+<p>作成されたブランチに対する、コミットやマージリクエストの状態を一覧で確認することが可能で、進捗状況を見ることができる。</p>
+<p>コミットを管理するためには、gitlabでBranchを修正する際のコミットメッセージに、<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を入れる。</p>
+<p><img alt="" src="../_images/jira_gitlab_branch_4.png" /></p>
+</section>
+<section id="mr">
+<h4>MR管理<a class="headerlink" href="#mr" title="Permalink to this heading">¶</a></h4>
+<p>MRについては、2つの方法でMRとJIRAの課題を紐づけることができる</p>
+<ul class="simple">
+<li><p>JIRAから作成されたブランチについては、自動的に作成元の課題と紐付けられる<br />
+<img alt="" src="../_images/jira_gitlab_branch_3.png" /></p></li>
+<li><p>コミットと同様にMRのコメントに<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を追加すると、対象の課題とMRも紐付けられる。
+以下の例では、SCRUM-11から作成されたMRだがコメントにSCRUM-3と入っているので両方の課題に紐付けられる
+<img alt="" src="../_images/jira_gitlab_branch_5.png" /></p></li>
+</ul>
+<p>★★★★★MRしたらストーリーを完了に移動できるかチェック★★★★★</p>
+</section>
+</section>
+<section id="jiraissue">
+<h3>JIRAからIssue作成（プレミアム）<a class="headerlink" href="#jiraissue" title="Permalink to this heading">¶</a></h3>
+<p>gitlabがプレミアムの場合に、JIRAからIssueを発行できる。</p>
+</section>
+</section>
+<section id="id8">
+<h2>おすすめの利用方法<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+<section id="id9">
+<h1>参考サイト<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference external" href="https://aslead.nri.co.jp/products/gitlab/column/introduction-of-gitlab-connector-for-jira-software.html">GitLab（ギットラボ）とJira（ジラ）を連携しよう！「GitLab Connector for Jira Software」とは</a></p></li>
 <li><p><a class="reference external" href="https://qiita.com/_superdry/items/e4f30cdedc14da6ddf83">JiraとGitLabの連携してもっと便利に使おう！</a></p></li>

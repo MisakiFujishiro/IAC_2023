@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ストーリー &mdash; iac_2023 1.0.0 documentation</title>
+  <title>テーマ &mdash; iac_2023 1.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -42,8 +42,8 @@
               <p class="caption" role="heading"><span class="caption-text">活動記録:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="record.html">活動記録</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ストーリー</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">ストーリー詳細</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">テーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id2">ストーリー</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id3">ポイント</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">スターターイメージ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id5">でもストーリー</a></li>
@@ -55,7 +55,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/gitlab.html">gitによるタスク管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/jira.html">jiraによるタスク管理</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html">参考サイト</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html">gitlabとjiraの連携</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gitOps/jira_gitlab.html#id9">参考サイト</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/strategy.html">ブランチ戦略</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html">gitlabとJIRAの比較</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gitOps/dev_flow.html#id5">開発フロー案</a></li>
@@ -63,9 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">デモ:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../demo/codepipeline.html">Cloudformation用のcodepipelineを作成する</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/codepipeline.html#id15">テンプレートファイル一覧</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/stack.html">LambdaとEvent作成フロー</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../demo/stack.html#id3">スタックの作成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/story.html">LambdaとEvent作成フロー</a></li>
 </ul>
 
         </div>
@@ -82,7 +81,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">ストーリー</li>
+      <li class="breadcrumb-item active">テーマ</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/record/story.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -93,46 +92,12 @@
            <div itemprop="articleBody">
              
   <section id="id1">
-<h1>ストーリー<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
-<ul class="simple">
-<li><p>Chap1: DevOpsとIaC</p>
-<ul>
-<li><p>DevOpsの思想</p>
-<ul>
-<li><p>DevOpsの価値</p></li>
-<li><p>DevOpsに必要なもの</p></li>
-</ul>
-</li>
-<li><p>IaCの価値</p>
-<ul>
-<li><p>DevOpsにおけるIaC・GitOpsの価値・役割</p></li>
-<li><p>AWSにおけるIaC（CFN/SAM/CDK）</p></li>
-<li><p>IaCとCICD・GitOpsについて</p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Chap2: チームでIaCを利用・運用するためのノウハウ</p>
-<ul>
-<li><p>コードの品質担保について：横展開につながる</p>
-<ul>
-<li><p>複数人で作業している時のTips</p></li>
-<li><p>テスト</p></li>
-</ul>
-</li>
-<li><p>開発フローについて</p>
-<ul>
-<li><p>JIRAとgitlab共通的な必要最低限のベストプラクティス利用方法</p></li>
-<li><p>JIRAとgitlabの比較</p></li>
-</ul>
-</li>
-<li><p>全体像</p></li>
-<li><p>デモ</p></li>
-</ul>
-</li>
-</ul>
+<h1>テーマ<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<p>複数チーム開発におけるIaC運用ルールの体系化と実践のための方法論</p>
+</section>
 <section id="id2">
-<h2>ストーリー詳細<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<h1>ストーリー<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference external" href="https://misakifujishiro.github.io/reveal_iac_2023/test.html#/0/1">reveal</a></p>
 <ul class="simple">
 <li><p>Chap1: DevOpsとIaC</p>
 <ul>
@@ -155,6 +120,25 @@
 </ul>
 </li>
 <li><p>AWSにおけるIaC（CFN/SAM/CDK）</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Chap2: IaCを運用する</p>
+<ul>
+<li><p>アンチパターン</p>
+<ul>
+<li><p>対応すべきテーマの選定</p>
+<ul>
+<li><p>始め方がわからない。何から始めれば良いかわからない</p></li>
+<li><p>正しく運用されない。</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>始め方がわからないことに対する対策</p>
+<ul>
+<li><p>CICDの価値</p></li>
 <li><p>IaCとCICD・GitOpsについて</p>
 <ul>
 <li><p>IaC単独：リソースの設定などを可視化できる</p></li>
@@ -164,33 +148,27 @@
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li><p>Chap2: チームでIaCを利用・運用するためのノウハウ</p>
+<li><p>正しく運用されない問題に対する対策</p>
 <ul>
-<li><p>コードの品質担保について：横展開につながる</p>
+<li><p>コードの品質担保について：横展開</p>
 <ul>
-<li><p>複数人で作業している時のTips</p>
-<ul>
-<li><p>命名規則</p></li>
 <li><p>Readme</p>
 <ul>
 <li><p>InputとOutputの明記</p></li>
 </ul>
 </li>
+<li><p>命名規則</p></li>
 <li><p>テンプレートの作成</p>
 <ul>
+<li><p>テンプレートファイル（リソース単位か機能単位か）</p></li>
 <li><p>MR</p></li>
 <li><p>Issue</p></li>
-<li><p>テンプレートファイル（リソース単位か機能単位か）</p></li>
 </ul>
 </li>
 <li><p>ソースコードのRV体制</p></li>
 </ul>
 </li>
 <li><p>テスト</p></li>
-</ul>
-</li>
 <li><p>開発フローについて</p>
 <ul>
 <li><p>JIRAとgitlab共通的な必要最低限のベストプラクティス利用方法</p></li>
@@ -226,29 +204,10 @@
 </li>
 </ul>
 </li>
-<li><p>Chap3: 上記を踏まえてのIaCスターターセット</p>
-<ul>
-<li><p>全体像</p>
-<ul>
-<li><p>Gitなし・CICDなし</p></li>
-<li><p>GitとCICD導入でGitOps(IaCの価値)</p></li>
-<li><p>JIRAとGitlabの連携(開発フロー)</p></li>
 </ul>
 </li>
-<li><p>デモ</p>
-<ul>
-<li><p>管理単位の課題</p>
-<ul>
-<li><p>JIRAから確認</p></li>
+<li><p>Chap3: デモ</p></li>
 </ul>
-</li>
-<li><p>gitOpsによる自動デプロイ</p></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</section>
 <section id="id3">
 <h2>ポイント<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
