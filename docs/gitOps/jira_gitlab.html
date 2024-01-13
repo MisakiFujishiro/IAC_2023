@@ -59,20 +59,23 @@
 <li class="toctree-l3"><a class="reference internal" href="#id4">統合の設定</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">連携機能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#jiragitlab">JIRAからGITLABの操作</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#jirabranch">JIRAからBranchを作成</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">ブランチの管理</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id7">コミット管理</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#mr">MR管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mr">コミットの管理・MRの管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">より高度なコミットの管理・MRの管理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">JIRAのコメントへのGitlabのアクション反映</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mrissue">MRでIssueを完了にする</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">詳細なルール設定</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">GITLABからJIRAの操作</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#jiraissue">JIRAからIssue作成（プレミアム）</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">おすすめの利用方法</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#id9">参考サイト</a></li>
 <li class="toctree-l1"><a class="reference internal" href="strategy.html">ブランチ戦略</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_flow.html">gitlabとJIRAの比較</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_flow.html#id5">開発フロー案</a></li>
@@ -155,6 +158,10 @@ GitLabのグループは設定から追加ができる。</p>
 <li><p>Linkの画面で連携するgitlabでPJを選択</p></li>
 </ol>
 <p><img alt="" src="../_images/jira_gitlab_setting_3.png" /></p>
+<ol class="arabic simple" start="4">
+<li><p>API Tokenの取得<br />
+<a class="reference external" href="https://id.atlassian.com/manage-profile/security/api-tokens">こちらのURL</a>からAPIを発行し、取得したAPIキーをメモしておく記憶しておく(gitlabの設定で利用)</p></li>
+</ol>
 </section>
 <section id="gitlab">
 <h3>gitlab側の設定<a class="headerlink" href="#gitlab" title="Permalink to this heading">¶</a></h3>
@@ -168,7 +175,7 @@ GitLabのグループは設定から追加ができる。</p>
 <ul class="simple">
 <li><p>Web URL - Jira サイトの URL (例: https://myjirasite.atlassian.net)</p></li>
 <li><p>ユーザー名またはメール アドレス - Jira プロファイルに登録されているユーザー名またはメール アドレス。</p></li>
-<li><p>パスワードまたは API トークン - API トークンを作成してクリップボードにコピー &amp; ペーストします。</p></li>
+<li><p>パスワードまたは API トークン - 先ほど作成したAPI トークンを作成してクリップボードにコピー &amp; ペーストします。</p></li>
 </ul>
 </li>
 <li><p>[変更を保存] を選択</p></li>
@@ -176,12 +183,51 @@ GitLabのグループは設定から追加ができる。</p>
 </section>
 <section id="id4">
 <h3>統合の設定<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
-<p>★★★★★要確認★★★★★
-<img alt="" src="../_images/jira_gitlab_setting_5.png" /></p>
+<p>Gitlabのアクション（CommitやMergeRequest）に応じて、Jira側のIssueにどのようなアクションを反映させるかの設定を行う。</p>
+<p><img alt="" src="../_images/jira_gitlab_setting_5.png" /></p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-left head"><p>設定名</p></th>
+<th class="text-left head"><p>設定項目</p></th>
+<th class="text-left head"><p>内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Triger</p></td>
+<td class="text-left"><p>Commit/Merge Request</p></td>
+<td class="text-left"><p>GitlabのCommitやMerge Requestのアクションに対して、JIRAのイベントを発行するかを設定する</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>コメント設定</p></td>
+<td class="text-left"><p>True/False</p></td>
+<td class="text-left"><p>GitlabのCommitやMerge Requestのアクションの記録をコメントとして残すか否かを設定する</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p></p></td>
+<td class="text-left"><p>Standard</p></td>
+<td class="text-left"><p>コミットタイトルやブランチ名が表示される</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p></p></td>
+<td class="text-left"><p>Detail</p></td>
+<td class="text-left"><p>コミットメッセージも表示される</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Jira Issueを最終状態に移行</p></td>
+<td class="text-left"><p>True/False</p></td>
+<td class="text-left"><p>Gitlabのアクションに応じて、イシューを移動させるかの設定</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p></p></td>
+<td class="text-left"><p>完了に移動</p></td>
+<td class="text-left"><p>完了に移動させる</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p></p></td>
+<td class="text-left"><p>カスタムトランジション</p></td>
+<td class="text-left"><p>カスタム設定をして、所定の状態に移動させる</p></td>
+</tr>
+</tbody>
+</table>
+<p>最後に、Jira issue matchingを設定する。これは、Gitlabが紐付けるJIRAのIssueを発見するための設定。</p>
 </section>
 </section>
-<section id="id5">
-<h2>連携機能<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
+<section id="jiragitlab">
+<h2>JIRAからGITLABの操作<a class="headerlink" href="#jiragitlab" title="Permalink to this heading">¶</a></h2>
 <section id="jirabranch">
 <h3>JIRAからBranchを作成<a class="headerlink" href="#jirabranch" title="Permalink to this heading">¶</a></h3>
 <p>連携が完了すると、jiraの課題やIssueからBranchを作成することが可能になる。</p>
@@ -189,44 +235,95 @@ GitLabのグループは設定から追加ができる。</p>
 <p>ブランチを作成を押下すると、gitlabのページに移動して、ブランチを作成するProjectとブランチ名を指定する。</p>
 <p><img alt="" src="../_images/jira_gitlab_branch_2.png" /></p>
 </section>
-<section id="id6">
-<h3>ブランチの管理<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
-<section id="id7">
-<h4>コミット管理<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h4>
-<p>作成されたブランチに対する、コミットやマージリクエストの状態を一覧で確認することが可能で、進捗状況を見ることができる。</p>
-<p>コミットを管理するためには、gitlabでBranchを修正する際のコミットメッセージに、<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を入れる。</p>
-<p><img alt="" src="../_images/jira_gitlab_branch_4.png" /></p>
-</section>
 <section id="mr">
-<h4>MR管理<a class="headerlink" href="#mr" title="Permalink to this heading">¶</a></h4>
-<p>MRについては、2つの方法でMRとJIRAの課題を紐づけることができる</p>
+<h3>コミットの管理・MRの管理<a class="headerlink" href="#mr" title="Permalink to this heading">¶</a></h3>
+<p>gitlabでのコミットメッセージおよびMergeRequestのコメントにをJIRAに反映させることができる。
+コミットメッセージに、<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を入れておくと、対象のJIRAのIssueにメッセージが反映される。</p>
+<p>作成したブランチのコミットメッセージにIDを追加しておく
+<img alt="" src="../_images/jira_gitlab_commit_1.png" /></p>
+<p>jiraの画面から、「すべての開発状況を表示ボタン」から連携状況を見ると、コミットのメッセージが反映されている</p>
+<p><img alt="" src="../_images/jira_gitlab_commit_2.png" /></p>
+</section>
+<section id="id5">
+<h3>より高度なコミットの管理・MRの管理<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<section id="id6">
+<h4>JIRAのコメントへのGitlabのアクション反映<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h4>
+<p>上記のCommitやMerge RequestのアクティビティをJIRAのコメントに反映させることができる。
+CommitとMerge Requestどのアクションでコメントをするかやどのレベルのメッセージを反映させるかは、gitlab側の設定である「統合の設定」で定義可能</p>
+<p>以下の例では、MRのすべての詳細を有効化していた場合。</p>
+<p><img alt="" src="../_images/jira_gitlab_comment_connect.png" /></p>
+</section>
+<section id="mrissue">
+<h4>MRでIssueを完了にする<a class="headerlink" href="#mrissue" title="Permalink to this heading">¶</a></h4>
+<p>gitlab側の設定である「統合の設定」で行った設定で「Jira Issueを最終状態に移行」を有効にしておくと、ブランチがMergeされた際に、Issueをクローズさせることができる。</p>
+<p>Closeについては、コミットと同様に、<code class="docutils literal notranslate"><span class="pre">Close</span> <span class="pre">PJID-NUM</span></code>と記述しておくと連携をして、移動させておいてくれる。</p>
+</section>
+<section id="id7">
+<h4>詳細なルール設定<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h4>
+<p>MRでIssueを完了にするだけでなく、JIRAからBranchを作成、MRを作成したタイミングでもステータスを変更することができる。</p>
+<p>例えば、下表のように設定するとJIRA側から進行状況が分かりやすくなる。</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-left head"><p>アクション</p></th>
+<th class="text-left head"><p>状態</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>ブランチ作成</p></td>
+<td class="text-left"><p>進行中</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>MR作成</p></td>
+<td class="text-left"><p>RV中</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>MR完了（Close）</p></td>
+<td class="text-left"><p>完了</p></td>
+</tr>
+</tbody>
+</table>
+<p>設定方法は以下</p>
 <ul class="simple">
-<li><p>JIRAから作成されたブランチについては、自動的に作成元の課題と紐付けられる<br />
-<img alt="" src="../_images/jira_gitlab_branch_3.png" /></p></li>
-<li><p>コミットと同様にMRのコメントに<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を追加すると、対象の課題とMRも紐付けられる。
-以下の例では、SCRUM-11から作成されたMRだがコメントにSCRUM-3と入っているので両方の課題に紐付けられる
-<img alt="" src="../_images/jira_gitlab_branch_5.png" /></p></li>
+<li><p>プロジェクト設定</p></li>
+<li><p>自動化</p></li>
+<li><p>ルール作成</p></li>
 </ul>
-<p>★★★★★MRしたらストーリーを完了に移動できるかチェック★★★★★</p>
+<p><img alt="" src="../_images/jira_gitlab_flow.png" /></p>
+<p>作成ルールは以下にすると良い</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-left head"><p>トリガ設定</p></th>
+<th class="text-left head"><p>条件設定</p></th>
+<th class="text-left head"><p>アクション設定</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>branchの作成</p></td>
+<td class="text-left"><p>ステータスがTODOと等しい</p></td>
+<td class="text-left"><p>課題のトランジションで、進行中に変更</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>PullRequestの作成</p></td>
+<td class="text-left"><p>ステータスが進行中と等しい</p></td>
+<td class="text-left"><p>課題のトランジションで、RV中に変更</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>PullRequestのマージ</p></td>
+<td class="text-left"><p>ステータスがRVと等しい</p></td>
+<td class="text-left"><p>課題のトランジションで、完了に変更</p></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="../_images/jira_gitlab_rule.png" /></p>
 </section>
 </section>
+</section>
+<section id="id8">
+<h2>GITLABからJIRAの操作<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<p>GITLAB側で<code class="docutils literal notranslate"><span class="pre">PJID-NUM</span></code>を設定すると、自動でLINKが設定される。</p>
+<p>gitlabで作業をしている際に、どのJIRAの課題に紐づいているかをワンクリックで確認できる。</p>
+<p><img alt="" src="../_images/jira_gitlab_connect.png" /></p>
 <section id="jiraissue">
 <h3>JIRAからIssue作成（プレミアム）<a class="headerlink" href="#jiraissue" title="Permalink to this heading">¶</a></h3>
 <p>gitlabがプレミアムの場合に、JIRAからIssueを発行できる。</p>
 </section>
 </section>
-<section id="id8">
-<h2>おすすめの利用方法<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
-</section>
-</section>
-<section id="id9">
-<h1>参考サイト<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference external" href="https://aslead.nri.co.jp/products/gitlab/column/introduction-of-gitlab-connector-for-jira-software.html">GitLab（ギットラボ）とJira（ジラ）を連携しよう！「GitLab Connector for Jira Software」とは</a></p></li>
-<li><p><a class="reference external" href="https://qiita.com/_superdry/items/e4f30cdedc14da6ddf83">JiraとGitLabの連携してもっと便利に使おう！</a></p></li>
-<li><p><a class="reference external" href="https://zenn.dev/maronn/articles/d973dd85980070">JIRAとGitLabを連携して、マージリクエストがマージされた際自動でステータス移動をできるようにする</a></p></li>
-<li><p><a class="reference external" href="https://rimever.hatenablog.com/entry/2020/06/13/000000">GitLabとJIRAの連携で出来ることをメモ</a></p></li>
-</ul>
 </section>
 
 
